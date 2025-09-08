@@ -1,0 +1,938 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+@page {
+  size: A4 portrait;
+  margin: 10mm 0 0 0;   /* top right bottom left */
+}
+
+
+@media print {
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 8px !important;
+    -webkit-print-color-adjust: exact; 
+    print-color-adjust: exact;
+  }
+   table {
+    page-break-inside: auto;  
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+}
+.custom-table {
+  width: auto;
+   table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;   
+  font-family: Arial, sans-serif;
+
+}
+
+.custom-table td {
+  border: 1px solid #333;
+  text-align: center;
+   white-space: nowrap;  
+     padding: 8px 8px; 
+     font-size: 8px;
+}
+
+
+
+.logo-cell {
+  background-color: #f9f9f9;
+  width: 65px;    
+  padding: 2px;  
+  text-align: center;
+  vertical-align: middle;
+}
+
+.logo-cell img {
+  max-width: 100%;
+  width: 110px;   
+  height: auto;
+}
+
+
+.company-name {
+  font-size: 10px;
+  font-weight: bold;
+  background-color: #e6f0ff;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+
+.head td {
+  font-size: 8px;
+  font-weight: bold;
+  background-color: #f0f8ff;
+  text-align: center;
+}
+
+.head span{
+  font-size: 7px;
+}
+
+
+.subhead td {
+  font-size: 7px;
+  background-color: #dbeaf7;
+  text-align: center;
+  font-weight: bold;
+}
+
+.subhead-test{
+   font-size: 8px;
+  background-color: #dbeaf7;
+  text-align: center;
+  font-weight: bold;
+  text-decoration: underline;
+
+
+}
+
+
+.t1-details td {
+  font-size: 7px;
+  background-color: #ffffff;
+  text-align: left;
+}
+
+
+.t1-details .label {
+  font-weight: bold;
+  background-color: #dbeaf7;
+  text-align: left;
+}
+
+.t1-details .value {
+  text-align: left;
+  font-style: italic;
+}
+
+.t2-details .value {
+  text-align: center;
+  font-style: italic;
+}
+
+.t2-details td {
+  font-size: 7px;
+  background-color: #ffffff;
+  text-align: center;
+  
+}
+
+
+.t2-details .label {
+  font-weight: bold;
+  background-color: #dbeaf7;
+  text-align: center;
+}
+
+tr.t2-details td.drift {
+  padding: 8px 12px;
+}
+
+
+
+.conclusion td {
+  text-align: left;
+  
+  background-color: #fdfdfd;
+  text-align: center;
+  font-size: 7px;
+  
+}
+.conclusion .option {
+  display: inline-block;
+  margin-right: 30px;
+}
+
+.conclusion-label {
+  font-weight: bold;
+  margin-right: 10px;
+ 
+}
+
+.conclusion label {
+  margin-right: 10px;
+  cursor: pointer;
+
+}
+
+.conclusion input[type="checkbox"] {
+  width: 25px;   
+  height: 25px; 
+  cursor: pointer;
+  accent-color: #007bff; 
+  vertical-align: middle;
+}
+
+td.ac {
+  font-size: 8px;
+  font-weight: normal;
+  text-align: left !important;  
+  vertical-align: middle;
+  border: none;
+}
+
+td.re {
+  font-size: 8px;         
+  text-align: left;        
+  vertical-align: top;     
+  border: none !important;  
+  padding: 4px 6px;         
+}
+
+tr.fullrow td{
+  font-size: 8px;
+  text-align: left;
+  font-weight: bold;
+
+}
+
+td.remarks {
+  vertical-align: top;
+  text-align: left;      
+  padding: 4px;
+  font-weight: bold;  
+}
+
+tr.inspection td{
+  font-size: 6px;
+  background-color: #dbeaf7;
+font-weight: bold;
+
+}
+
+tr.inspection td.whitecell,
+tr.inspection td.ac,
+tr.inspection td.remarks{
+  background-color: white; 
+  font-weight: bold;
+  font-size: 6px;
+}
+
+.inspection td.label{
+ text-align: left;
+font-size: 5px;
+
+}
+
+
+
+
+.verify-sec td{
+  font-size:7px;
+  text-align: left;
+}
+
+.verify-sec td.label{
+  background-color: #dbeaf7;
+  font-weight: bold;
+
+}
+.condition td {
+    text-align: left;
+    font-size: 7px;
+    border-top: none;
+    border-bottom: none;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+}
+
+.condition .h{
+text-decoration: underline;
+font-size: 8px;
+color: black;
+font-weight: bold;
+}
+
+.condition:nth-child(3) td {
+   
+    border-bottom: 2px solid black;
+}
+
+
+
+.h td{
+    text-align: left;
+    font-size: 10;
+    text-decoration: underline;
+    align-items: left;
+    border: none;
+}
+
+.footer {
+  font-size: 9px;
+  font-weight:normal;
+}
+
+
+tr.footer td:nth-child(1) { 
+  color: #1a4e8a;
+}
+
+
+tr.footer td:nth-child(2) { 
+  color: #0a7c5a; 
+}
+
+
+tr.footer td:nth-child(3) { 
+  color: #8a2be2;
+}
+
+
+tr.footer td:nth-child(4) { 
+  color: #b37400; 
+}
+
+tr.footer td:nth-child(5) { 
+  color: #b33a3a; 
+
+}
+tr.footer td:nth-child(6) { 
+  color: #000000;  
+}
+
+
+
+
+
+
+</style>
+
+<table class="custom-table" border="2" cellpadding="6" cellspacing="0" style="width:100%; table-layout:fixed; border-collapse:collapse;">
+  <tbody>
+
+    <tr>
+      <td class="logo-cell" rowspan="4" style="width:8%; height: 10%;">
+        <img src="{% static 'images/image.png' %}" alt="Spanning Image" width="60">
+      </td>
+      <td colspan="112" class="company-name">ABIPET TECHNOLOGIES PRIVATE LIMITED</td>
+    </tr>
+
+    <tr class="head">
+      <td colspan="112">
+        INTEGRATED MANAGEMENT SYSTEM <br>
+        <span>(ISO 9001: 2015, API Spec Q1 10th Edition, ISO 14001: 2015, ISO 45001: 2018, API Spec 6A 21st Edition)</span>
+      </td>
+    </tr>
+
+    <tr class="subhead">
+      <td colspan="112">LEVEL 04 - QHSE - IMS - FACTORY ACCEPTANCE TESTING - PSL3G MANUAL GATE VALVE</td>
+    </tr>
+ 
+    <tr class="t1-details">
+      <td colspan="14" class="label">Process</td>
+      <td colspan="12">09/OPS</td>
+      <td colspan="13" class="label">Level</td>
+      <td colspan="21">LO4/OPS</td>
+      <td colspan="14" class="label">Procedure Ref.No.</td>
+      <td colspan="38">AP-P09-OPS-L02-10</td>
+    </tr>
+
+ 
+    <tr class="t1-details">
+      <td colspan="1" class="label">Document Number</td>
+      <td colspan="26">AP-P09--OPS-AT-L04-06</td>
+      <td colspan="13" class="label">Issue No./Date</td>
+      <td colspan="21">01 / 01-07-2024</td>
+      <td colspan="14" class="label">Rev No./date</td>
+      <td colspan="38">00 / 01-07-2024</td>
+    </tr>
+
+ 
+    <tr class="t1-details">
+      <td colspan="1" class="label">Part Description</td>
+      <td colspan="26">{{ part_description }}</td>
+      <td colspan="13" class="label">Pressure Rating</td>
+      <td colspan="21">{{ psl_level }}</td>
+      <td colspan="14" class="label">Test Specification/ <br> Revision</td>
+      <td colspan="13">{{ test_specification }}</td>
+      <td colspan="12" class="label">Work Instruction/ <br> Ref.</td>
+      <td colspan="13">{{ work_instruction_ref }}</td>
+    </tr>
+
+
+    <tr class="t1-details">
+      <td colspan="1" class="label">Part No./Revision:</td>
+      <td colspan="26">{{ part_no_revision }}</td>
+      <td colspan="13" class="label">PSL Level</td>
+      <td colspan="21">{{ psl_level }}</td>
+      <td colspan="14" class="label">Station no</td>
+      <td colspan="13">{{ station_no }}</td>
+      <td colspan="12" class="label">Quality Plan <br> Ref.</td>
+      <td colspan="13">{{ quality_plan_ref }}</td>
+    </tr>
+
+
+    <tr class="t1-details">
+      <td colspan="1" class="label">Drawing No./Revision:</td>
+      <td colspan="26">{{ drawing_no_revision }}</td>
+      <td colspan="13" class="label">Material Class</td>
+      <td colspan="21">{{ material_class }}</td>
+      <td colspan="14" class="label">Qty</td>
+      <td colspan="13">{{ qty }}</td>
+      <td colspan="12" class="label">Assembly Order <br> No</td>
+      <td colspan="13">{{ assembly_order_no }}</td>
+    </tr>
+
+
+    <tr class="t1-details">
+      <td colspan="1" class="label">Model</td>
+      <td colspan="26">{{ model }}</td>
+      <td colspan="13" class="label">Temperature <br> Class</td>
+      <td colspan="21">{{ temperature_class }}</td>
+      <td colspan="14" class="label">Operator Name</td>
+      <td colspan="13">{{ operator_name }}</td>
+      <td colspan="12" class="label">Work Order No</td>
+      <td colspan="13">{{ work_order_no }}</td>
+    </tr>
+
+
+    <tr class="t1-details">
+      <td colspan="1" class="label">Size</td>
+      <td colspan="26">{{ size }}</td>
+      <td colspan="13" class="label">Test No:</td>
+      <td colspan="21">{{ test_no }}</td>
+      <td colspan="14" class="label">Assembly Serial No.</td>
+      <td colspan="13">{{ assembly_serial_no }}</td>
+      <td colspan="12" class="label">Date</td>
+      <td colspan="13">{{ current_date }}</td>
+    </tr>
+
+     </tr>
+      <tr class="subhead-test">
+        <td colspan="113">Test Medium: 70% Mono Ethylene Glycol + 28% DM Water + 2% Cortec Vpci 649 Bd</td>
+    </tr>
+
+     <tr class="subhead">
+        <td colspan="113">HYDRO STATIC SHELL TEST</td>
+    </tr>
+
+    
+    <tr class="t2-details">
+      <td colspan="1" class="label">S.No</td>
+      <td colspan="13" class="label">STEP</td>
+      <td colspan="13" class="label">START TIME <br> HRS</td>
+      <td colspan="13" class="label">START PRESSURE <br> PSI</td>
+      <td colspan="9" class="label">END TIME <br> HRS</td>
+      <td colspan="12" class="label">END PRESSURE <br> PSI</td>
+      <td colspan="14" class="label">PRESSURE CHANGE <br> PSI</td>
+      <td colspan="13" class="label">HOLD PERIOD <br> MINS</td>
+      <td colspan="12" class="label">NO VISIBLE <br> LEAK</td>
+      <td colspan="13" class="label">PRESSURE DROP <br> TO 0 PSI</td>
+    </tr>
+
+      <tr class="t2-details">
+        <td colspan="1" class="label">1</td>
+        <td colspan="13" class="label">PRIMARY</td>
+        <td colspan="13">{{ shell_primary.start_time|default:"" }}</td>
+        <td colspan="13">{{ shell_primary.start_pressure|default:"" }}</td>
+        <td colspan="9">{{ shell_primary.stop_time|default:"" }}</td>
+        <td colspan="12">{{ shell_primary.stop_pressure|default:"" }}</td>
+        <td colspan="14">{{ shell_primary.result_difference|default:"" }}</td>
+        <td colspan="13" class="label">{{ hydroshell_P_dur|default:"" }}</td>
+        <td colspan="12">{{ shell_primary.result|default:"" }}</td>
+        <td colspan="13">{{ shell_primary.pressure_drop|default:"" }}</td>
+    </tr>
+
+     <tr class="t2-details">
+        <td colspan="1" class="label">2</td>
+        <td colspan="13" class="label">SECONDARY</td>
+        <td colspan="13">{{ shell_secondary.start_time|default:"" }}</td>
+        <td colspan="13">{{ shell_secondary.start_pressure|default:"" }}</td>
+        <td colspan="9">{{ shell_secondary.stop_time|default:"" }}</td>
+        <td colspan="12">{{ shell_secondary.stop_pressure|default:"" }}</td>
+        <td colspan="14">{{ shell_secondary.result_difference|default:"" }}</td>
+        <td colspan="13" class="label">{{ hydroshell_S_dur|default:"" }}</td>
+        <td colspan="12">{{ shell_secondary.result|default:"" }}</td>
+        <td colspan="13">{{ shell_secondary.pressure_drop|default:"" }}</td>
+    </tr>
+
+    <tr class="subhead">
+        <td colspan="113">RE-TORQUEING OF BONNET CONNECTIONS STUDS</td>
+    </tr>
+
+     <tr class="t2-details">
+      <td colspan="1" class="label">Torque Value:</td>
+        <td colspan="13">{{ torque_value|default:"" }}</td>
+        <td colspan="13" class="label">Torque  <br> Wrench ID:</td>
+        <td colspan="34">{{ wrench_id|default:"" }}</td>
+        <td colspan="14" class="label">Due Date</td>
+        <td colspan="38">{{ due_date|default:"" }}</td>
+        </tr>
+
+         <tr class="subhead">
+        <td colspan="113">HYDRO STATIC SEAT TEST-SIDE A</td>
+    </tr>
+
+     <tr class="t2-details">
+      <td colspan="1" class="label">S.No</td>
+      <td colspan="13" class="label">STEP</td>
+      <td colspan="13" class="label">START TIME <br> HRS</td>
+      <td colspan="13" class="label">START PRESSURE <br> PSI</td>
+      <td colspan="9" class="label">END TIME <br> HRS</td>
+      <td colspan="12" class="label">END PRESSURE <br> PSI</td>
+      <td colspan="14" class="label">PRESSURE CHANGE <br> PSI</td>
+      <td colspan="13" class="label">HOLD PERIOD <br> MINS</td>
+      <td colspan="12" class="label">NO VISIBLE <br> LEAK</td>
+      <td colspan="13" class="label">PRESSURE DROP <br> TO 0 PSI</td>
+    </tr>
+
+
+    <tr class="t2-details">
+        <td colspan="1" class="label">1</td>
+        <td colspan="13" class="label">PRIMARY</td>
+        <td colspan="13">{{ seat_a_primary.start_time|default:"" }}</td>
+        <td colspan="13">{{ seat_a_primary.start_pressure|default:"" }}</td>
+        <td colspan="9">{{ seat_a_primary.stop_time|default:"" }}</td>
+        <td colspan="12">{{ seat_a_primary.stop_pressure|default:"" }}</td>
+        <td colspan="14">{{ seat_a_primary.result_difference|default:"" }}</td>
+        <td colspan="13" class="label">{{ hydroseat_A_P_dur|default:"" }}</td>
+        <td colspan="12">{{ seat_a_primary.result|default:"" }}</td>
+        <td colspan="13">{{ seat_a_primary.pressure_drop|default:"" }}</td>
+    </tr>
+    <tr class="t2-details">
+        <td colspan="1" class="label"  >2</td>
+        <td colspan="13" class="label"  >SECONDARY</td>
+        <td colspan="13" >{{ seat_a_secondary.start_time|default:"" }}</td>
+        <td colspan="13" >{{ seat_a_secondary.start_pressure|default:"" }}</td>
+        <td colspan="9" >{{ seat_a_secondary.stop_time|default:"" }}</td>
+        <td colspan="12" >{{ seat_a_secondary.stop_pressure|default:"" }}</td>
+        <td colspan="14" >{{ seat_a_secondary.result_difference|default:"" }}</td>
+        <td colspan="13" class="label"  >{{ hydroseat_A_S_dur|default:"" }}</td>
+        <td colspan="12" >{{ seat_a_secondary.result|default:"" }}</td>
+        <td colspan="13" >{{ seat_a_secondary.pressure_drop|default:"" }}</td>
+    </tr>
+    <tr class="t2-details">
+        <td colspan="1"  class="label" >3</td>
+        <td colspan="13" class="label" >TERTIARY</td>
+        <td colspan="13" >{{ seat_a_tertiary.start_time|default:"" }}</td>
+        <td colspan="13" >{{ seat_a_tertiary.start_pressure|default:"" }}</td>
+        <td colspan="9" >{{ seat_a_tertiary.stop_time|default:"" }}</td>
+        <td colspan="12" >{{ seat_a_tertiary.stop_pressure|default:"" }}</td>
+        <td colspan="14" >{{ seat_a_tertiary.result_difference|default:"" }}</td>
+        <td colspan="13" class="label"  >{{ hydroseat_A_T_dur|default:"" }}</td>
+        <td colspan="12" >{{ seat_a_tertiary.result|default:"" }}</td>
+        <td colspan="13" >{{ seat_a_tertiary.pressure_drop|default:"" }}</td>
+    </tr>
+
+     <tr class="subhead">
+        <td colspan="113">HYDRO STATIC SEAT TEST-SIDE-B</td>
+    </tr>
+
+     <tr class="t2-details">
+      <td colspan="1" class="label">S.No</td>
+      <td colspan="13" class="label">STEP</td>
+      <td colspan="13" class="label">START TIME <br> HRS</td>
+      <td colspan="13" class="label">START PRESSURE <br> PSI</td>
+      <td colspan="9" class="label">END TIME <br> HRS</td>
+      <td colspan="12" class="label">END PRESSURE <br> PSI</td>
+      <td colspan="14" class="label">PRESSURE CHANGE <br> PSI</td>
+      <td colspan="13" class="label">HOLD PERIOD <br> MINS</td>
+      <td colspan="12" class="label">NO VISIBLE <br> LEAK</td>
+      <td colspan="13" class="label">PRESSURE DROP <br> TO 0 PSI</td>
+    </tr>
+
+
+    <tr class="t2-details">
+        <td colspan="1" class="label">1</td>
+        <td colspan="13" class="label">PRIMARY</td>
+        <td colspan="13">{{ seat_b_primary.start_time|default:"" }}</td>
+        <td colspan="13">{{ seat_b_primary.start_pressure|default:"" }}</td>
+        <td colspan="9">{{ seat_b_primary.stop_time|default:"" }}</td>
+        <td colspan="12">{{ seat_b_primary.stop_pressure|default:"" }}</td>
+        <td colspan="14">{{ seat_b_primary.result_difference|default:"" }}</td>
+        <td colspan="13" class="label">{{ hydroseat_B_P_dur|default:"" }}</td>
+        <td colspan="12">{{ seat_b_primary.result|default:"" }}</td>
+        <td colspan="13">{{ seat_b_primary.pressure_drop|default:"" }}</td>
+    </tr>
+     <tr class="t2-details">
+        <td colspan="1" class="label"  >2</td>
+        <td colspan="13" class="label"  >SECONDARY</td>
+        <td colspan="13" >{{ seat_b_secondary.start_time|default:"" }}</td>
+        <td colspan="13" >{{ seat_b_secondary.start_pressure|default:"" }}</td>
+        <td colspan="9" >{{ seat_b_secondary.stop_time|default:"" }}</td>
+        <td colspan="12" >{{ seat_b_secondary.stop_pressure|default:"" }}</td>
+        <td colspan="14" >{{ seat_b_secondary.result_difference|default:"" }}</td>
+        <td colspan="13" class="label"  >{{ hydroseat_B_S_dur|default:"" }}</td>
+        <td colspan="12" >{{ seat_b_secondary.result|default:"" }}</td>
+        <td colspan="13" >{{ seat_b_secondary.pressure_drop|default:"" }}</td>
+    </tr>
+    <tr class="t2-details">
+        <td colspan="1"  class="label" >3</td>
+        <td colspan="13" class="label" >TERTIARY</td>
+        <td colspan="13" >{{ seat_b_tertiary.start_time|default:"" }}</td>
+        <td colspan="13" >{{ seat_b_tertiary.start_pressure|default:"" }}</td>
+        <td colspan="9" >{{ seat_b_tertiary.stop_time|default:"" }}</td>
+        <td colspan="12" >{{ seat_b_tertiary.stop_pressure|default:"" }}</td>
+        <td colspan="14" >{{ seat_b_tertiary.result_difference|default:"" }}</td>
+        <td colspan="13" class="label"  >{{ hydroseat_B_T_dur|default:"" }}</td>
+        <td colspan="12" >{{ seat_b_tertiary.result|default:"" }}</td>
+        <td colspan="13" >{{ seat_b_tertiary.pressure_drop|default:"" }}</td>
+    </tr>
+
+    <tr class="t2-details">
+        <td colspan="1" class="label"  >2</td>
+        <td colspan="13" class="label">SECONDARY <br> (Test Pressure-2.0 <br> MPs(300psi) <br> ± 10%)</td>
+        <td colspan="13" >{{ gas_seat_b.start_time|default:"" }}</td>
+        <td colspan="13" >{{ gas_seat_b.start_pressure|default:"" }}</td>
+        <td colspan="9" >{{ gas_seat_b.stop_time|default:"" }}</td>
+        <td colspan="12" >{{ gas_seat_b.stop_pressure|default:"" }}</td>
+        <td colspan="14" >{{ gas_seat_b.result_difference|default:"" }}</td>
+        <td colspan="13" class="label"  >{{ gas_seat_B_dur|default:"" }}</td>
+        <td colspan="12" >{{ gas_seat_b.result|default:"" }}</td>
+        <td colspan="13" >{{ gas_seat_b.pressure_drop|default:"" }}</td>
+    </tr>
+
+    
+     <tr class="condition" >
+        <td colspan="113" class="h">ACCEPTANCE CRITERIA  FOR HYDROSTATIC TEST</td>
+    </tr>
+<tr class="condition">
+    <td colspan="113">1.The equipment shall show no visible leakage while subjected to test pressure.</td>
+</tr>
+<tr class="condition">
+    <td colspan="113">2.At the start of the hold period, monitored pressure shall not be greater thatn 5% above the specified test pressure. <br>
+       During the hokd period the pressure shall not vary from the pressure at the start of the hold period by more than 5% or 3.45 MPa(500psi),whichever is less </td>
+</tr>
+<tr class="condition">
+    <td colspan="113">3.Monitored pressure shall not be less than the specified test pressure.</td>
+</tr>  
+</body>
+</table>
+
+<div class="page-break"></div> 
+
+<table class="custom-table" border="2" style="width:100%; table-layout:fixed; border-collapse:collapse;">
+
+     <tr class="subhead">
+        <td colspan="126">GAS TEST (TEST MEDIUM - Nitrogen Gas)</td>
+    </tr>
+
+    <tr class="subhead">
+        <td colspan="126">GAS BODY TEST</td>
+    </tr>
+
+   
+     <tr class="t2-details">
+        <td colspan="14" class="label">S.No</td>
+        <td colspan="13" class="label">STEP</td>
+        <td colspan="13" class="label">START TIME <br> HRS</td>
+        <td colspan="13" class="label">START PRESSURE <br> PSI</td>
+        <td colspan="9" class="label">END TIME <br> HRS</td>
+        <td colspan="12 " class="label">END PRESSURE <br> PSI</td>
+        <td colspan="14" class="label">PRESSURE CHANGE <br> PSI</td>
+        <td colspan="13" class="label">HOLD PERIOD <br> MINS</td>
+        <td colspan="12" class="label">NO VISIBLE <br> LEAK</td>
+        <td colspan="13" class="label">PRESSURE DROP <br> TO 0 PSI</td>
+    </tr>
+
+     <tr class="t2-details">
+        <td colspan="14" class="label">1</td>
+        <td colspan="13" class="label">PRIMARY</td>
+        <td colspan="13">{{ gas_body.start_time|default:"" }}</td>
+        <td colspan="13">{{ gas_body.start_pressure|default:"" }}</td>
+        <td colspan="9">{{ gas_body.stop_time|default:"" }}</td>
+        <td colspan="12">{{ gas_body.stop_pressure|default:"" }}</td>
+        <td colspan="14">{{ gas_body.result_difference|default:"" }}</td>
+        <td colspan="13" class="label">{{ gas_body_test_dur|default:"" }}</td>
+        <td colspan="12">{{ gas_body.result|default:"" }}</td>
+        <td colspan="13">{{ gas_body.pressure_drop|default:"" }}</td>
+    </tr>
+
+     <tr class="subhead">
+        <td colspan="113">GAS SEAT TEST-SIDE A </td>
+    </tr>
+
+  
+      <tr class="t2-details">
+        <td colspan="14" class="label">S.No</td>
+        <td colspan="13" class="label">STEP</td>
+        <td colspan="13" class="label">START TIME <br> HRS</td>
+        <td colspan="13" class="label">START PRESSURE <br> PSI</td>
+        <td colspan="9" class="label">END TIME <br> HRS</td>
+        <td colspan="12 " class="label">END PRESSURE <br> PSI</td>
+        <td colspan="14" class="label">PRESSURE CHANGE <br> PSI</td>
+        <td colspan="13" class="label">HOLD PERIOD <br> MINS</td>
+        <td colspan="12" class="label">NO VISIBLE <br> LEAK</td>
+        <td colspan="13" class="label">PRESSURE DROP <br> TO 0 PSI</td>
+    </tr>
+ <tr class="t2-details">
+        <td colspan="14" class="label">1</td>
+        <td colspan="13" class="label">PRIMARY</td>
+        <td colspan="13">{{ gas_seat_a.start_time|default:"" }}</td>
+        <td colspan="13">{{ gas_seat_a.start_pressure|default:"" }}</td>
+        <td colspan="9">{{ gas_seat_a.stop_time|default:"" }}</td>
+        <td colspan="12">{{ gas_seat_a.stop_pressure|default:"" }}</td>
+        <td colspan="14">{{ gas_seat_a.result_difference|default:"" }}</td>
+        <td colspan="13" class="label">{{ gas_seat_A_dur|default:"" }}</td>
+        <td colspan="12">{{ gas_seat_a.result|default:"" }}</td>
+        <td colspan="13">{{ gas_seat_a.pressure_drop|default:"" }}</td>
+    </tr>
+
+
+    <tr class="t2-details">
+        <td colspan="14" class="label"  >2</td>
+        <td colspan="13" class="label">SECONDARY <br> (Test Pressure-2.0 <br> MPs(300psi) ± 10%)</td>
+        <td colspan="13" >{{ gas_seat_a.start_time|default:"" }}</td>
+        <td colspan="13" >{{ gas_seat_a.start_pressure|default:"" }}</td>
+        <td colspan="9" >{{ gas_seat_a.stop_time|default:"" }}</td>
+        <td colspan="12" >{{ gas_seat_a.stop_pressure|default:"" }}</td>
+        <td colspan="14" >{{ gas_seat_a.result_difference|default:"" }}</td>
+        <td colspan="13" class="label"  >{{ gas_seat_A_dur|default:"" }}</td>
+        <td colspan="12" >{{ gas_seat_a.result|default:"" }}</td>
+        <td colspan="13" >{{ gas_seat_a.pressure_drop|default:"" }}</td>
+    </tr>
+   
+     <tr class="subhead">
+        <td colspan="126">GAS SEAT TEST-SIDE B </td>
+    </tr>
+
+   
+     <tr class="t2-details">
+        <td colspan="14" class="label">S.No</td>
+        <td colspan="13" class="label">STEP</td>
+        <td colspan="13" class="label">START TIME <br> HRS</td>
+        <td colspan="13" class="label">START PRESSURE <br> PSI</td>
+        <td colspan="9" class="label">END TIME <br> HRS</td>
+        <td colspan="12 " class="label">END PRESSURE <br> PSI</td>
+        <td colspan="14" class="label">PRESSURE CHANGE <br> PSI</td>
+        <td colspan="13" class="label">HOLD PERIOD <br> MINS</td>
+        <td colspan="12" class="label">NO VISIBLE <br> LEAK</td>
+        <td colspan="13" class="label">PRESSURE DROP <br> TO 0 PSI</td>
+    </tr>
+ <tr class="t2-details">
+        <td colspan="14" class="label">1</td>
+        <td colspan="13" class="label">PRIMARY</td>
+        <td colspan="13">{{ gas_seat_b.start_time|default:"" }}</td>
+        <td colspan="13">{{ gas_seat_b.start_pressure|default:"" }}</td>
+        <td colspan="9">{{ gas_seat_b.stop_time|default:"" }}</td>
+        <td colspan="12">{{ gas_seat_b.stop_pressure|default:"" }}</td>
+        <td colspan="14">{{ gas_seat_b.result_difference|default:"" }}</td>
+        <td colspan="13" class="label">{{ gas_seat_B_dur|default:"" }}</td>
+        <td colspan="12">{{ gas_seat_b.result|default:"" }}</td>
+        <td colspan="13">{{ gas_seat_b.pressure_drop|default:"" }}</td>
+    </tr>
+<tr class="t2-details">
+        <td colspan="14" class="label"  >2</td>
+        <td colspan="13" class="label">SECONDARY <br> (Test Pressure-2.0 <br> MPs(300psi) ± 10%)</td>
+        <td colspan="13" >{{ gas_seat_b.start_time|default:"" }}</td>
+        <td colspan="13" >{{ gas_seat_b.start_pressure|default:"" }}</td>
+        <td colspan="9" >{{ gas_seat_b.stop_time|default:"" }}</td>
+        <td colspan="12" >{{ gas_seat_b.stop_pressure|default:"" }}</td>
+        <td colspan="14" >{{ gas_seat_b.result_difference|default:"" }}</td>
+        <td colspan="13" class="label"  >{{ gas_seat_B_dur|default:"" }}</td>
+        <td colspan="12" >{{ gas_seat_b.result|default:"" }}</td>
+        <td colspan="13" >{{ gas_seat_b.pressure_drop|default:"" }}</td>
+    </tr>
+   
+
+    <tr class="subhead">
+        <td colspan="126">GAS BACK SEAT TEST </td>
+    </tr>
+
+  
+    <tr class="t2-details">
+        <td colspan="14" class="label">S.No</td>
+        <td colspan="13" class="label">STEP</td>
+        <td colspan="13" class="label">START TIME <br> HRS</td>
+        <td colspan="13" class="label">START PRESSURE <br> PSI</td>
+        <td colspan="9" class="label">END TIME <br> HRS</td>
+        <td colspan="12 " class="label">END PRESSURE <br> PSI</td>
+        <td colspan="14" class="label">PRESSURE CHANGE <br> PSI</td>
+        <td colspan="13" class="label">HOLD PERIOD <br> MINS</td>
+        <td colspan="12" class="label">NO VISIBLE <br> LEAK</td>
+        <td colspan="13" class="label">PRESSURE DROP <br> TO 0 PSI</td>
+    </tr>
+   <tr class="t2-details">
+        <td colspan="14" class="label">1</td>
+        <td colspan="13" class="label">PRIMARY</td>
+        <td colspan="13">{{ gas_back_seat.start_time|default:"" }}</td>
+        <td colspan="13">{{ gas_back_seat.start_pressure|default:"" }}</td>
+        <td colspan="9">{{ gas_back_seat.stop_time|default:"" }}</td>
+        <td colspan="12">{{ gas_back_seat.stop_pressure|default:"" }}</td>
+        <td colspan="14">{{ gas_back_seat.result_difference|default:"" }}</td>
+        <td colspan="13" class="label">{{ gas_back_seat_dur|default:"" }}</td>
+        <td colspan="12">{{ gas_back_seat.result|default:"" }}</td>
+        <td colspan="13">{{ gas_back_seat.pressure_drop|default:"" }}</td>
+    </tr>
+
+    <tr class="condition">
+        <td colspan="126" class="h">ACCEPTANCE CRITERIA  FOR GAS TEST</td>
+    </tr>
+
+    <tr class="condition">
+    <td colspan="126">1.No visible leakage(hubbles) shall appear in the water bath during the pressure-holding period</td>
+    </tr>
+    <tr class="condition">
+    <td colspan="126">2.The maximum acceptable reduction of the gas test pressure shall be 2.0 MPa(300psi)if there is no visible leakage in the water bath during the hold period.</td>
+    </tr>
+    <tr class="condition">
+    <td colspan="126">3.For secondary gas seat test shall be no visisble leakage in the water bath during the holding periods <br> with a maximum allowable reduction of gas test pressure of 0.2 MPa(30psi)</td>
+    </tr>
+
+    <tr class="subhead">
+        <td colspan="126">DRIFT TEST</td>
+    </tr>
+
+    <tr class="t2-details">
+        <td colspan="14" class="label">S.NO</td>
+        <td colspan="26" class="label">Tested Date</td>
+        <td colspan="13" class="label">Test Fluid Drain</td>
+        <td colspan="9" class="label">Drift Test <br> A to B</td>
+        <td colspan="26" class="label">Greasing</td>
+        <td colspan="13" class="label">Drift Shaft ID</td>
+        <td colspan="12" class="label">Calibrated  On</td>
+        <td colspan="13" class="label">Due On</td>
+    </tr>
+
+    
+    <tr class="t2-details">
+    <td colspan="14" class="drift"></td>
+    <td colspan="26" class="drift"></td>
+    <td colspan="13" class="drift"></td>
+    <td colspan="9" class="drift"></td>
+    <td colspan="26" class="drift"></td>
+    <td colspan="13" class="drift"></td>
+    <td colspan="12" class="drift"></td>
+    <td colspan="13" class="drift"></td>
+    </tr>
+    
+    <tr class="conclusion">
+  <td colspan="126">
+    <label class="conclusion-label">Test Conclusion:</label>
+
+    <span class="option">
+      <label>Passed</label>
+      <input type="checkbox" name="conclusion" value="passed">
+    </span>
+
+    <span class="option">
+      <label>Fail</label>
+      <input type="checkbox" name="conclusion" value="fail">
+    </span>
+  </td>
+</tr>
+
+<tr class="inspection">
+       <td colspan="126">Inspection Check Points</td>
+  </tr>
+
+  <tr class="inspection">
+    <td colspan="14" class="label">1.Test Fixtures</td>
+     <td colspan="13">Used/Not Used</td>
+    <td colspan="35" class="whitecell">{{ fixture|default:"Used / Not Used" }}</td>
+    <td colspan="26" class="label"> 5.Valve Position during Shell Test(Hydra)</td>
+    <td colspan="13" class="whitecell">{{ shell_position|default:"Used / Not Used" }}</td>
+    <td colspan="12" class="label">5.Valve Position <br> during Shell Test(Gas)</td>
+    <td colspan="13" class="whitecell">{{ shell_position_gas|default:"Used / Not Used" }}</td>
+  </tr>
+  <tr class="inspection">
+    <td colspan="14" class="label">2. Shall Testing performed <br> prior to Painting</td>
+    <td colspan="13">Yes/No</td>
+    <td colspan="35" class="whitecell">{{ painting|default:"Yes / No" }}</td>
+    <td colspan="26" class="label">6.Valve Position during <br> Seat Test(Hydra)</td>
+    <td colspan="13" class="whitecell">{{ seat_position|default:"Used / Not Used" }}</td>
+    <td colspan="12" class="label">6.Valve Position <br> during Seat Test(Gas)</td>
+    <td colspan="13" class="whitecell">{{ seat_position_gas|default:"Used / Not Used" }}</td>
+  </tr>
+  <tr class="inspection">
+    <td colspan="14" class="label">3.Test Fittings are Installed</td>
+    <td colspan="13">Yes/No</td>
+    <td colspan="35" class="whitecell">{{ fittings|default:"Yes / No" }}</td>
+    <td colspan="26" class="label"> 7.Verify the Flange Ring Grooves(Free from <br> dent,damage,scratches)</td>
+    <td colspan="38" class="whitecell"></td>
+  
+  </tr>
+  <tr class="inspection">
+    <td colspan="14" class="label">4.Shall Testing performed prior <br> to  addition of  Body Filler Grease</td>
+    <td colspan="13">Yes/No</td>
+    <td colspan="99" class="whitecell">{{ grease|default:"Yes / No" }}</td>
+  </tr>
+
+  <tr class="fullrow">
+      <td colspan="126">Note : Break Open Torque shall be measured during testing and to record in AP-P09-OPS-AT-L04-10-RUNNING TORQUE & BREAK OPEN TORQUE ENTRY SHEET</td>
+  </tr>
+  <tr class="verify-sec">      
+    <td colspan="14" class="label">Tested by</td>
+    <td colspan="48" class="label">Verified by</td>
+    <td colspan="64" class="label">Approved By QA</td>
+  </tr>
+  <tr class="verify-sec">
+  <td colspan="14" class="label">Name</td>
+  <td colspan="13" >{{ tested_by|default:"" }}</td>
+  <td colspan="13" class="label">Name</td>
+  <td colspan="22">{{ verified_by|default:"" }}</td>
+  <td colspan="16" class="label">Name</td>
+  <td colspan="48">{{ approved_by|default:"" }}</td>
+</tr>
+  <tr class="verify-sec">
+  <td colspan="14" class="label">Position</td>
+  <td colspan="13">{{ position1|default:"" }}</td>
+  <td colspan="13" class="label">Position</td>
+  <td colspan="22">{{ position2|default:"" }}</td>
+  <td colspan="16" class="label">Position</td>
+  <td colspan="48">{{ position3|default:"" }}</td>
+</tr>
+  <tr class="verify-sec" >
+  <td colspan="14" class="label">Signature</td>
+  <td colspan="13"></td>
+  <td colspan="13" class="label">Signature</td>
+  <td colspan="22"></td>
+  <td colspan="16" class="label">Signature</td>
+  <td colspan="48"></td>
+</tr>
+  <tr class="verify-sec">
+  <td colspan="14" class="label">Date</td>
+  <td colspan="13">{{ current_date|default:"" }}</td>
+  <td colspan="13" class="label">Date</td>
+  <td colspan="22">{{ current_date|default:"" }}</td>
+  <td colspan="16" class="label">Date</td>
+  <td colspan="48">{{ current_date|default:"" }}</td>
+</tr>
+</tr>
+  <tr class="footer">
+  <td colspan="14">ISO 9001:2015,<br>
+                    5th Edition
+  </td>
+  <td colspan="13">API Spec Q1,<br>
+                  10th Edition
+  </td>
+  <td colspan="13">ISO 14001:2015,<br>
+                  3rd Edition
+  </td>
+  <td colspan="22">ISO 45001:2018,<br>
+                  1st Edition
+  </td>
+  <td colspan="16">API Spec 6A,<br>21st Edition</td>
+  <td colspan="48">ABIPET Internal Requirements</td>
+</tr>
+</tr>
+  <tr class="footer">
+  <td colspan="14">8.5.1, 8.5.2</td>
+  <td colspan="13">5.6.3, 5.6.5, 5.6.9.3</td>
+  <td colspan="13"></td>
+  <td colspan="22"></td>
+  <td colspan="16">11.1.4,11.2.2,11.2.3, <br> 11.2.3.1,11.2.3.2,11.2.4, <br>  11.2.4.3,11.4</td>
+  <td colspan="48"></td>
+</tr>
+
+
+  </tbody>
+</table>

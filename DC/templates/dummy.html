@@ -1,0 +1,713 @@
+<!-- <table class="table table-bordered">
+
+  <thead>
+    <tr>
+      <th style="width: 5%;">S.No</th>
+      <th style="width: 20%;">Item Name</th>
+      <th style="width: 20%;">Description</th>
+      <th style="width: 15%;">Project Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><input type="text" class="form-control" name="item_name[]" placeholder="Item Name"></td>
+      <td><input type="text" class="form-control" name="description[]" placeholder="Description"></td>
+      <td><input type="text" class="form-control" name="project_name[]" placeholder="Project Name"></td>
+    </tr>
+  </tbody>
+
+
+  <thead>
+    <tr>
+      <th style="width: 8%;">Quantity</th>
+      <th style="width: 8%;">UOM</th>
+      <th style="width: 12%;">Weight/Unit</th>
+      <th style="width: 12%;">Total Weight</th>
+      <th style="width: 12%;">Sqft/Unit</th>
+      <th style="width: 12%;">Total Sqft</th>
+      <th style="width: 8%;">Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><input type="number" class="form-control" name="quantity[]" placeholder="Qty"></td>
+      <td>
+        <select class="form-control" name="uom[]">
+          <option value="">UOM</option>
+          <option value="NOS">NOS</option>
+          <option value="KG">KG</option>
+          <option value="METER">METER</option>
+          <option value="LITER">LITER</option>
+          <option value="SET">SET</option>
+          <option value="PIECE">PIECE</option>
+        </select>
+      </td>
+      <td><input type="number" step="0.01" class="form-control" name="weight_per_unit[]" placeholder="Weight/Unit"></td>
+      <td><input type="number" step="0.01" class="form-control" name="total_weight[]" placeholder="Total Weight"></td>
+      <td><input type="number" step="0.01" class="form-control" name="sqft_per_unit[]" placeholder="Sqft/Unit"></td>
+      <td><input type="number" step="0.01" class="form-control" name="total_sqft[]" placeholder="Total Sqft"></td>
+      <td><input type="number" class="form-control" name="rate[]" placeholder="Rate"></td>
+    </tr>
+  </tbody>
+
+ 
+  <thead>
+    <tr>
+      <th style="width: 20%;">Remarks</th>
+      <th style="width: 10%;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><input type="text" class="form-control" name="remarks[]" placeholder="Remarks"></td>
+      <td><button type="button" class="btn btn-danger btn-sm">Delete</button></td>
+    </tr>
+  </tbody>
+</table> -->
+<!-- 
+<tbody class="item-box">
+   
+    <tr>
+        <td rowspan="3" class="sno">1</td>
+        <td colspan="2"><input type="text" class="form-control" name="item_name[]" placeholder="Item Name"></td>
+        <td colspan="2"><input type="text" class="form-control" name="description[]" placeholder="Description"></td>
+        <td><select class="form-control" name="uom[]">
+                <option value="">UOM</option>
+                <option value="NOS">NOS</option>
+                <option value="KG">KG</option>
+        </select></td>
+    </tr>
+
+    
+    <tr>
+        <td><input type="number" class="form-control" name="quantity[]" placeholder="Quantity"></td>
+        <td><input type="number" class="form-control" name="weight_per_unit[]" placeholder="Weight/Unit"></td>
+        <td><input type="number" class="form-control" name="total_weight[]" placeholder="Total Weight" readonly></td>
+        <td><input type="number" class="form-control" name="square_feet_per_unit[]" placeholder="SqFt/Unit"></td>
+        <td><input type="number" class="form-control" name="total_square_feet[]" placeholder="Total SqFt" readonly></td>
+        <td><input type="number" class="form-control" name="rate[]" placeholder="Rate"></td>
+    </tr>
+
+   
+    <tr>
+        <td><input type="text" class="form-control" name="project_name[]" placeholder="Project"></td>
+        <td><input type="text" class="form-control" name="project_incharge[]" placeholder="Incharge"></td>
+        <td colspan="2"><input type="text" class="form-control" name="remarks[]" placeholder="Remarks"></td>
+        <td colspan="2">
+            <button type="button" class="btn btn-danger btn-sm remove-item-btn" onclick="removeBox(this)">Delete</button>
+        </td>
+    </tr>
+</tbody> -->
+
+
+<!-- <body>
+    <div class="container-fluid">
+        <div class="main-container">
+            Section Header
+            <div class="section-header">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <h2 class="section-title">
+                        <i class="fas fa-box section-icon"></i> Items Details
+                    </h2>
+                    <div class="toggle-controls d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="showWeight" checked onchange="toggleColumns('weight-column')">
+                            <label class="form-check-label" for="showWeight">Show Weight</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="showSquareFeet" checked onchange="toggleColumns('square-feet-column')">
+                            <label class="form-check-label" for="showSquareFeet">Show Square Feet</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            Items Container
+            <div class="items-container">
+                <table class="items-table" id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th class="col-sno">S.No</th>
+                            <th class="col-basic">Item Name</th>
+                            <th class="col-desc">Description</th>
+                            <th class="col-uom">UOM</th>
+                            <th class="col-qty">Quantity</th>
+                            <th class="col-weight weight-column">Weight/Unit</th>
+                            <th class="col-weight weight-column">Total Weight</th>
+                            <th class="col-sqft square-feet-column">Sq Ft/Unit</th>
+                            <th class="col-sqft square-feet-column">Total Sq Ft</th>
+                            <th class="col-rate">Rate</th>
+                            <th class="col-project">Project Name</th>
+                            <th class="col-project">Project Incharge</th>
+                            <th class="col-remarks">Remarks</th>
+                            <th class="col-action">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        Item 1
+                        <tr class="item-group" data-item="1">
+                            Row 1: Basic Information (3 fields)
+                            <td rowspan="3" class="text-center">
+                                <div class="serial-number">1</div>
+                            </td>
+                        </tr>
+                        <tr class="row-1">
+                            <td colspan="13">
+                                <div class="row-header"><i class="fas fa-info-circle me-2"></i>Basic Information</div>
+                            </td>
+                        </tr>
+                        <tr class="row-1">
+                            <td><input type="text" class="form-control item-name" name="item_name[]" placeholder="Item Name" required></td>
+                            <td><input type="text" class="form-control" name="description[]" placeholder="Description" required></td>
+                            <td>
+                                <select class="form-select" name="uom[]" required>
+                                    <option value="">UOM</option>
+                                    <option value="NOS">NOS</option>
+                                    <option value="KG">KG</option>
+                                    <option value="METER">METER</option>
+                                    <option value="LITER">LITER</option>
+                                    <option value="SET">SET</option>
+                                    <option value="PIECE">PIECE</option>
+                                </select>
+                            </td>
+                            <td colspan="10"></td>
+                        </tr>
+                        
+                        Row 2: Measurements & Details (7 fields)
+                        <tr class="row-2">
+                            <td colspan="13">
+                                <div class="row-header"><i class="fas fa-calculator me-2"></i>Measurements & Details</div>
+                            </td>
+                        </tr>
+                        <tr class="row-2">
+                            <td colspan="1"></td>
+                            <td><input type="number" class="form-control quantity" name="quantity[]" placeholder="0.00" step="0.01" required onchange="calculateTotals(this)"></td>
+                            <td class="weight-column"><input type="number" class="form-control weight-per-unit" name="weight_per_unit[]" placeholder="0.00" step="0.01" onchange="calculateTotals(this)"></td>
+                            <td class="weight-column"><input type="number" class="form-control total-weight readonly-field" name="total_weight[]" placeholder="0.00" step="0.01" readonly></td>
+                            <td class="square-feet-column"><input type="number" class="form-control square-feet-per-unit" name="square_feet_per_unit[]" placeholder="0.00" step="0.01" onchange="calculateTotals(this)"></td>
+                            <td class="square-feet-column"><input type="number" class="form-control total-square-feet readonly-field" name="total_square_feet[]" placeholder="0.00" step="0.01" readonly></td>
+                            <td><input type="number" class="form-control" name="rate[]" placeholder="0.00" step="0.01"></td>
+                            <td colspan=""></td>
+                            <td><input type="text" class="form-control" name="remarks[]" placeholder="Remarks"></td>
+                            <td colspan="3"></td>
+                        </tr>
+                        
+                        Row 3: Project Info & Actions (2 fields + button)
+                        <tr class="row-3">
+                            <td colspan="13">
+                                <div class="row-header"><i class="fas fa-project-diagram me-2"></i>Project Information & Actions</div>
+                            </td>
+                        </tr>
+                        <tr class="row-3">
+                            <td colspan=""></td>
+                            <td><input type="text" class="form-control" name="project_name[]" placeholder="Project Name"></td>
+                            <td><input type="text" class="form-control" name="project_incharge[]" placeholder="Project Incharge"></td>
+                            <td colspan="3"></td>
+                            <td><button type="button" class="btn btn-remove" onclick="removeItem(this)"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                Add Item Button
+                <div class="text-center">
+                    <button type="button" class="btn btn-add-item" onclick="addItem()">
+                        <i class="fas fa-plus me-2"></i>Add New Item
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+<!-- 
+    <div class="items-container">
+    <table class="items-table" id="itemsTable">
+        <thead>
+            
+            <tr>
+                <th rowspan="2" class="col-sno">S.No</th>
+                <th colspan="3" class="text-center">Basic Information</th>
+            </tr>
+     
+          <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Description</th>
+                <th>UOM</th>
+            </tr>
+          </thead>
+          <tbody id="itemsTableBody">
+            
+            <tr>
+                <td rowspan="3" class="text-center">1</td>
+                <td><input type="text" class="form-control" name="item_name[]" placeholder="Item Name" required></td>
+                <td><input type="text" class="form-control" name="description[]" placeholder="Description" required></td>
+                <td>
+                    <select class="form-select" name="uom[]" required>
+                        <option value="">UOM</option>
+                        <option value="NOS">NOS</option>
+                        <option value="KG">KG</option>
+                        <option value="METER">METER</option>
+                        <option value="LITER">LITER</option>
+                        <option value="SET">SET</option>
+                        <option value="PIECE">PIECE</option>
+                    </select>
+                </td>
+            </tr>
+          </tbody>
+
+
+         
+            <tr>
+                <th colspan="6" class="text-center">Measurements & Details</th>
+            </tr>
+            <thead>
+            <tr>
+                <th>Quantity</th>
+                <th class="weight-column">Weight/Unit</th>
+                <th class="weight-column">Total Weight</th>
+                <th class="square-feet-column">Sq Ft/Unit</th>
+                <th class="square-feet-column">Total Sq Ft</th>
+                <th>Rate</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+                  <td><input type="number" class="form-control quantity" name="quantity[]" placeholder="0.00" step="0.01" onchange="calculateTotals(this)" required></td>
+                  <td class="weight-column"><input type="number" class="form-control weight-per-unit" name="weight_per_unit[]" placeholder="0.00" step="0.01"></td>
+                  <td class="weight-column"><input type="number" class="form-control total-weight" name="total_weight[]" placeholder="0.00" step="0.01" readonly></td>
+                  <td class="square-feet-column"><input type="number" class="form-control square-feet-per-unit" name="square_feet_per_unit[]" placeholder="0.00" step="0.01"></td>
+                  <td class="square-feet-column"><input type="number" class="form-control total-square-feet" name="total_square_feet[]" placeholder="0.00" step="0.01" readonly></td>
+                  <td><input type="number" class="form-control" name="rate[]" placeholder="0.00" step="0.01"></td>
+              </tr>
+            </tbody>
+
+            
+            <tr>
+                <th colspan="3" class="text-center">Project Info & Action</th>
+            </tr>
+            <thead>
+            <tr>
+                <th>Project Name</th>
+                <th>Project Incharge</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+             <tr>
+                <td><input type="text" class="form-control" name="project_name[]" placeholder="Project Name"></td>
+                <td><input type="text" class="form-control" name="project_incharge[]" placeholder="Project Incharge"></td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)"><i class="fas fa-trash"></i></button></td>
+            </tr>
+            </tbody>
+        </thead>
+
+       
+   <div class="text-center mt-3">
+        <button type="button" class="btn btn-add-item" onclick="addItem()">
+            <i class="fas fa-plus me-2"></i> Add New Item
+        </button>
+    </div>
+</div> -->
+
+<!-- <div class="items-container">
+  <table class="table table-bordered items-table" id="itemsTable">
+    <thead>
+      <
+      <tr>
+        <th rowspan="2" class="col-sno">S.No</th>
+        <th colspan="3" class="text-center">Basic Information</th>
+      </tr>
+      <tr>
+        <th>Item Name</th>
+        <th>Description</th>
+        <th>UOM</th>
+      </tr>
+
+    
+      <tr>
+        <th colspan="6" class="text-center">Measurements & Details</th>
+      </tr>
+      <tr>
+        <th>Quantity</th>
+        <th>Weight/Unit</th>
+        <th>Total Weight</th>
+        <th>Sq Ft/Unit</th>
+        <th>Total Sq Ft</th>
+        <th>Rate</th>
+      </tr>
+
+      
+      <tr>
+        <th colspan="3" class="text-center">Project Info & Action</th>
+      </tr>
+      <tr>
+        <th>Project Name</th>
+        <th>Project Incharge</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="itemsTableBody">
+      One item template (3 rows grouped by rowspan on S.No)
+      <tr>
+        <td rowspan="3" class="text-center sno">1</td>
+        Basic Info
+        <td><input type="text" class="form-control" name="item_name[]" placeholder="Item Name" required></td>
+        <td><input type="text" class="form-control" name="description[]" placeholder="Description" required></td>
+        <td>
+          <select class="form-select" name="uom[]" required>
+            <option value="">UOM</option>
+            <option value="NOS">NOS</option>
+            <option value="KG">KG</option>
+            <option value="METER">METER</option>
+            <option value="LITER">LITER</option>
+            <option value="SET">SET</option>
+            <option value="PIECE">PIECE</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        Measurements
+        <td><input type="number" class="form-control quantity" name="quantity[]" placeholder="0.00" step="0.01"></td>
+        <td><input type="number" class="form-control" name="weight_per_unit[]" placeholder="0.00" step="0.01"></td>
+        <td><input type="number" class="form-control" name="total_weight[]" placeholder="0.00" step="0.01" readonly></td>
+        <td><input type="number" class="form-control" name="sqft_per_unit[]" placeholder="0.00" step="0.01"></td>
+        <td><input type="number" class="form-control" name="total_sqft[]" placeholder="0.00" step="0.01" readonly></td>
+        <td><input type="number" class="form-control" name="rate[]" placeholder="0.00" step="0.01"></td>
+      </tr>
+      <tr>
+        Project Info
+        <td><input type="text" class="form-control" name="project_name[]" placeholder="Project Name"></td>
+        <td><input type="text" class="form-control" name="project_incharge[]" placeholder="Project Incharge"></td>
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">
+          <i class="fas fa-trash"></i>
+        </button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  Buttons
+  <div class="text-center mt-3">
+    <button type="button" class="btn btn-success" onclick="addItem()">
+      <i class="fas fa-plus me-2"></i> Add New Item
+    </button>
+    <button type="button" class="btn btn-secondary" onclick="refreshTable()">
+      <i class="fas fa-sync-alt me-2"></i> Refresh
+    </button>
+  </div>
+</div>
+
+<script>
+function addItem() {
+  const tableBody = document.getElementById("itemsTableBody");
+  const rowCount = tableBody.querySelectorAll("tr").length / 3; // 3 rows per item
+  const sno = rowCount + 1;
+
+  const newRows = `
+    <tr>
+      <td rowspan="3" class="text-center sno">${sno}</td>
+      <td><input type="text" class="form-control" name="item_name[]" placeholder="Item Name" required></td>
+      <td><input type="text" class="form-control" name="description[]" placeholder="Description" required></td>
+      <td>
+        <select class="form-select" name="uom[]" required>
+          <option value="">UOM</option>
+          <option value="NOS">NOS</option>
+          <option value="KG">KG</option>
+          <option value="METER">METER</option>
+          <option value="LITER">LITER</option>
+          <option value="SET">SET</option>
+          <option value="PIECE">PIECE</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td><input type="number" class="form-control" name="quantity[]" placeholder="0.00" step="0.01"></td>
+      <td><input type="number" class="form-control" name="weight_per_unit[]" placeholder="0.00" step="0.01"></td>
+      <td><input type="number" class="form-control" name="total_weight[]" placeholder="0.00" step="0.01" readonly></td>
+      <td><input type="number" class="form-control" name="sqft_per_unit[]" placeholder="0.00" step="0.01"></td>
+      <td><input type="number" class="form-control" name="total_sqft[]" placeholder="0.00" step="0.01" readonly></td>
+      <td><input type="number" class="form-control" name="rate[]" placeholder="0.00" step="0.01"></td>
+    </tr>
+    <tr>
+      <td><input type="text" class="form-control" name="project_name[]" placeholder="Project Name"></td>
+      <td><input type="text" class="form-control" name="project_incharge[]" placeholder="Project Incharge"></td>
+      <td><button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">
+        <i class="fas fa-trash"></i>
+      </button></td>
+    </tr>
+  `;
+
+  tableBody.insertAdjacentHTML("beforeend", newRows);
+}
+
+function removeItem(button) {
+  // remove 3 rows together
+  const row = button.closest("tr");
+  const prevRows = [row.previousElementSibling, row.previousElementSibling?.previousElementSibling];
+  row.remove();
+  prevRows.forEach(r => r && r.remove());
+
+  // re-number S.No
+  const snoCells = document.querySelectorAll(".sno");
+  snoCells.forEach((cell, index) => {
+    cell.textContent = index + 1;
+  });
+}
+
+function refreshTable() {
+  document.getElementById("itemsTableBody").innerHTML = `
+    <tr>
+      <td rowspan="3" class="text-center sno">1</td>
+      <td><input type="text" class="form-control" name="item_name[]" placeholder="Item Name" required></td>
+      <td><input type="text" class="form-control" name="description[]" placeholder="Description" required></td>
+      <td>
+        <select class="form-select" name="uom[]" required>
+          <option value="">UOM</option>
+          <option value="NOS">NOS</option>
+          <option value="KG">KG</option>
+          <option value="METER">METER</option>
+          <option value="LITER">LITER</option>
+          <option value="SET">SET</option>
+          <option value="PIECE">PIECE</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td><input type="number" class="form-control" name="quantity[]" placeholder="0.00" step="0.01"></td>
+      <td><input type="number" class="form-control" name="weight_per_unit[]" placeholder="0.00" step="0.01"></td>
+      <td><input type="number" class="form-control" name="total_weight[]" placeholder="0.00" step="0.01" readonly></td>
+      <td><input type="number" class="form-control" name="sqft_per_unit[]" placeholder="0.00" step="0.01"></td>
+      <td><input type="number" class="form-control" name="total_sqft[]" placeholder="0.00" step="0.01" readonly></td>
+      <td><input type="number" class="form-control" name="rate[]" placeholder="0.00" step="0.01"></td>
+    </tr>
+    <tr>
+      <td><input type="text" class="form-control" name="project_name[]" placeholder="Project Name"></td>
+      <td><input type="text" class="form-control" name="project_incharge[]" placeholder="Project Incharge"></td>
+      <td><button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">
+        <i class="fas fa-trash"></i>
+      </button></td>
+    </tr>
+  `;
+}
+</script>
+ -->
+<!-- 
+ <div class="items-container">
+  <form id="itemsForm">
+    <div id="itemsWrapper">
+      ONE ITEM BLOCK
+      <div class="item-block border p-3 mb-4 rounded shadow-sm">
+        <table class="table table-bordered">
+          <thead>
+            First header row
+            <tr>
+              <th class="col-sno">S.No</th>
+              <th>Item Name</th>
+              <th>Description</th>
+              <th>Project Name</th>
+              <th>Project Incharge</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center sno">1</td>
+              <td><input type="text" class="form-control" name="item_name[]" placeholder="Item Name" required></td>
+              <td><input type="text" class="form-control" name="description[]" placeholder="Description" required></td>
+              <td><input type="text" class="form-control" name="project_name[]" placeholder="Project Name"></td>
+              <td><input type="text" class="form-control" name="project_incharge[]" placeholder="Project Incharge"></td>
+            </tr>
+          </tbody>
+
+          Second header row
+          <thead>
+            <tr>
+              <th>Quantity</th>
+              <th>UOM</th>
+              <th>Weight/Unit</th>
+              <th>Total Weight</th>
+              <th>Sq Ft/Unit</th>
+              <th>Total Sq Ft</th>
+              <th>Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="number" class="form-control" name="quantity[]" placeholder="0.00" step="0.01" required></td>
+              <td>
+                <select style="width: 100%;" class="form-select" name="uom[]" required>
+                  <option value="">UOM</option>
+                  <option value="NOS">NOS</option>
+                  <option value="KG">KG</option>
+                  <option value="METER">METER</option>
+                  <option value="LITER">LITER</option>
+                  <option value="SET">SET</option>
+                  <option value="PIECE">PIECE</option>
+                </select>
+              </td>
+              <td><input type="number" class="form-control" name="weight_per_unit[]" placeholder="0.00" step="0.01"></td>
+              <td><input type="number" class="form-control" name="total_weight[]" placeholder="0.00" step="0.01" readonly></td>
+              <td><input type="number" class="form-control" name="square_feet_per_unit[]" placeholder="0.00" step="0.01"></td>
+              <td><input type="number" class="form-control" name="total_square_feet[]" placeholder="0.00" step="0.01" readonly></td>
+              <td><input type="number" class="form-control" name="rate[]" placeholder="0.00" step="0.01"></td>
+            </tr>
+          </tbody>
+
+          Third header row
+          <thead>
+            <tr>
+              <th>Project Name</th>
+              <th>Project Incharge</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="text" class="form-control" name="project_name[]" placeholder="Project Name"></td>
+              <td><input type="text" class="form-control" name="project_incharge[]" placeholder="Project Incharge"></td>
+              <td>
+                <button type="button" class="btn btn-danger btn-sm remove-btn">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    Controls
+    <div class="text-center mt-3">
+      <button type="button" class="btn btn-success" onclick="addItem()">
+        <i class="fas fa-plus me-2"></i> Add New Item
+      </button>
+      <button type="button" class="btn btn-warning" onclick="refreshItems()">
+        <i class="fas fa-sync me-2"></i> Refresh
+      </button>
+    </div>
+  </form>
+</div>
+<script> -->
+// let itemCount = 1;
+
+// function addItem() {
+//   itemCount++;
+//   let wrapper = document.getElementById("itemsWrapper");
+//   let firstBlock = wrapper.querySelector(".item-block");
+//   let newBlock = firstBlock.cloneNode(true);
+
+//   // Reset values
+//   newBlock.querySelectorAll("input").forEach(inp => {
+//     inp.value = "";
+//   });
+//   newBlock.querySelectorAll("select").forEach(sel => {
+//     sel.selectedIndex = 0;
+//   });
+
+//   // Update S.No
+//   newBlock.querySelector(".sno").innerText = itemCount;
+
+//   // Add remove functionality
+//   newBlock.querySelector(".remove-btn").onclick = function () {
+//     newBlock.remove();
+//     renumberItems();
+//   };
+
+//   wrapper.appendChild(newBlock);
+// }
+
+// function renumberItems() {
+//   document.querySelectorAll(".sno").forEach((el, idx) => {
+//     el.innerText = idx + 1;
+//   });
+//   itemCount = document.querySelectorAll(".item-block").length;
+// }
+
+// function refreshItems() {
+//   let wrapper = document.getElementById("itemsWrapper");
+//   wrapper.innerHTML = "";
+//   itemCount = 0;
+//   addItem(); // add fresh first item
+// }
+
+// // Initialize remove button on first block
+// document.querySelector(".remove-btn").onclick = function () {
+//   if (document.querySelectorAll(".item-block").length > 1) {
+//     this.closest(".item-block").remove();
+//     renumberItems();
+//   }
+// };
+
+
+// 
+
+<div class="items-container">
+  <form id="itemsForm">
+    <div id="itemsWrapper">
+      <div class="item-block" style="border:1px solid #ddd; padding:10px; margin-bottom:20px; border-radius:6px;">
+        <table class="table items-table" id="itemsTable" style="width:100%; text-align:center; vertical-align:middle;">
+          <tbody id="itemsTableBody">
+            <!-- Row 1 -->
+            <tr>
+              <th rowspan="6" style="width:5%;">S.No</th>
+              <th colspan="2" style="width:30%;">Item Name</th>
+              <th colspan="2" style="width:30%;">Description</th>
+              <th colspan="2" style="width:18%;">Project Name</th>
+              <th colspan="2" style="width:18%;">Project Incharge</th>
+            </tr>
+            <tr>
+              <td colspan="2"><input type="text" style="width:100%;" name="item_name[]"></td>
+              <td colspan="2"><input type="text" style="width:100%;" name="description[]"></td>
+              <td colspan="2"><input type="text" style="width:100%;" name="project_name[]"></td>
+              <td colspan="2"><input type="text" style="width:100%;" name="project_incharge[]"></td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr>
+              <th style="width:8%;">Quantity</th>
+              <th style="width:8%;">UOM</th>
+              <th style="width:10%;">Weight/Unit</th>
+              <th style="width:10%;">Total Wt</th>
+              <th style="width:10%;">SqFt/Unit</th>
+              <th style="width:10%;">Total SqFt</th>
+              <th style="width:10%;">Rate</th>
+            </tr>
+            <tr>
+              <td><input type="number" style="width:100%;" name="quantity[]"></td>
+              <td>
+                <select style="width:100%;" name="uom[]">
+                  <option value="">UOM</option>
+                  <option value="NOS">NOS</option>
+                  <option value="KG">KG</option>
+                  <option value="METER">METER</option>
+                  <option value="LITER">LITER</option>
+                  <option value="SET">SET</option>
+                  <option value="PIECE">PIECE</option>
+                </select>
+              </td>
+              <td><input type="number" style="width:100%;" name="weight_per_unit[]"></td>
+              <td><input type="number" style="width:100%;" name="total_weight[]" readonly></td>
+              <td><input type="number" style="width:100%;" name="square_feet_per_unit[]"></td>
+              <td><input type="number" style="width:100%;" name="total_square_feet[]" readonly></td>
+              <td><input type="number" style="width:100%;" name="rate[]"></td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr>
+              <th colspan="3" style="width:40%;">Remarks</th>
+              <!-- <th colspan="2" style="width:30%;">Project Incharge</th> -->
+              <th colspan="" style="width:30%;">Action</th>
+            </tr>
+            <tr>
+              <td colspan="3"><input type="text" style="width:100%;" name="project_name_2[]"></td>
+              <!-- <td colspan="2"><input type="text" style="width:100%;" name="project_incharge_2[]"></td> -->
+              <td colspan="">
+                <button type="button" style="background:red; color:white; border:none; padding:5px 10px; border-radius:4px;">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>

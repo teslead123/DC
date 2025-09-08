@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}DC_Report{% endblock %}
+{% block page_title %}Delivery Challan Report{% endblock %}
+
+{% block extra_css %}
+<style>
+    .report-container {
+        background: white;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 0 auto;
+
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+        display: block;
+    }
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+        padding: 12px;
+        font-size: 14px;
+        width: 100%;
+    }
+    .btn-download {
+        background: linear-gradient(135deg, #3B22C6 0%, #4C8CF1 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 20px auto 0;
+    }
+    .btn-download:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 34, 198, 0.3);
+    }
+    .loading {
+        display: none;
+        text-align: center;
+        margin-top: 10px;
+        color: #3B22C6;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="report-container">
+    <div class="form-group">
+        <label for="dcNumber">Delivery Challan Number</label>
+        <select id="dcNumber" class="form-control" onchange="updateInput()">
+            <option value="">Select or type a DC number</option>
+            {% for dc in delivery_challans %}
+                <option value="{{ dc.dcNo }}">{{ dc.dcNo }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" id="dcNumberInput" class="form-control" placeholder="Type DC number" style="margin-top: 10px;">
+    </div>
+    <button class="btn-download" onclick="generateReport()">Download PDF</button>
+    <div id="loading" class="loading">Generating PDF...</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateInput() {
+        const select = document.getElementById('dcNumber');
+        const input = document.getElementById('dcNumberInput');
+        input.value = select.value;
+    }
+
+    function generateReport() {
+        const dcNumber = document.getElementById('dcNumberInput').value || document.getElementById('dcNumber').value;
+        if (!dcNumber) {
+            alert('Please select or enter a Delivery Challan number.');
+            return;
+        }
+
+        document.getElementById('loading').style.display = 'block';
+
+
+        fetch('{% url 'delivery_challan_json' "placeholder" %}'.replace('placeholder', dcNumber), {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Delivery Challan not found');
+            }
+            return response.json();
+        })
+        .then(data => {
+            return fetch('{% url 'download_pdf' %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(data.dc)
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            document.getElementById('loading').style.display = 'none';
+            const url = window.URL.createObjectURL(blob);
+            const printWindow = window.open(url, '_blank');
+            
+            if (printWindow) {
+                printWindow.onload = function() {
+                    setTimeout(() => {
+                        printWindow.print();
+                        printWindow.onafterprint = function() {
+                            printWindow.close();
+                            downloadPDF(blob, dcNumber);
+                            window.URL.revokeObjectURL(url);
+                        };
+                        setTimeout(() => {
+                            if (!printWindow.closed) {
+                                try {
+                                    if (printWindow.document.hasFocus()) {
+                                        setTimeout(() => {
+                                            if (!printWindow.closed) {
+                                                printWindow.close();
+                                                downloadPDF(blob, dcNumber);
+                                                window.URL.revokeObjectURL(url);
+                                            }
+                                        }, 3000);
+                                    }
+                                } catch (e) {
+                                    downloadPDF(blob, dcNumber);
+                                    window.URL.revokeObjectURL(url);
+                                }
+                            }
+                        }, 1000);
+                    }, 500);
+                };
+                setTimeout(() => {
+                    if (printWindow && !printWindow.closed) {
+                        try {
+                            printWindow.print();
+                        } catch (e) {
+                            console.warn('Could not trigger print automatically:', e);
+                            downloadPDF(blob, dcNumber);
+                            printWindow.close();
+                            window.URL.revokeObjectURL(url);
+                        }
+                    }
+                }, 2000);
+            } else {
+                alert('Pop-up blocked. Please allow pop-ups for printing functionality.');
+                downloadPDF(blob, dcNumber);
+                window.URL.revokeObjectURL(url);
+            }
+        })
+        .catch(error => {
+            document.getElementById('loading').style.display = 'none';
+            alert('Error generating PDF: ' + error.message);
+        });
+    }
+
+    function downloadPDF(blob, dcNo) {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Delivery_Note_${dcNo}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    }
+</script>
+{% endblock %}
