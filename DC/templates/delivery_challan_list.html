@@ -1,0 +1,540 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Open DC List{% endblock %}
+
+{% block content %}
+<!-- <div class="content-area"> -->
+    <div class="form-container">
+        <!-- <h2 class="section-title">
+            <i class="fas fa-file-alt section-icon"></i> 
+        </h2> -->
+        <div class="table-responsive">
+            <table class="table items-table" id="dcTable">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">DC ID</th>
+                        <th style="width: 15%;">DC Type</th>
+                        <th style="width: 17%;">DC Number</th>
+                        <th style="width: 15%;">Customer Name</th>
+                        <th style="width: 10%;">Item Name</th>
+                        <th style="width: 12%;">DC Date</th>
+                        <th style="width: 27%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dc in delivery_challans %}
+                    <tr data-dc-id="{{ dc.id }}">
+                        <td>{{ dc.id }}</td>
+                        <td>{{ dc.dc_type }}</td> 
+                        <td>{{ dc.dcNo }}</td>
+                        <td>{{ dc.buyerName }}</td>
+                        <td>
+                            {% if dc.items.0.item_name %}
+                                {% for item in dc.items %}
+                                    {{ item.item_name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {{ dc.items|join:", " }}
+                            {% endif %}
+                        </td>
+                        <td>{{ dc.dcDate|date:"d-m-Y" }}</td>
+                        <td>
+                            <a href="{% url 'delivery_challan_view' dc.id %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <button class="btn btn-primary btn-sm btn-print" data-dc-number="{{ dc.dcNo }}">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn btn-warning btn-sm btn-cancel" data-dc-id="{{ dc.id }}" data-dc-number="{{ dc.dcNo }}">
+                                <i class="fas fa-times-circle"></i> Cancel
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No delivery challans found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="loading" style="display: none; text-align: center; padding: 20px;">
+            <i class="fas fa-spinner fa-spin"></i> Generating PDF...
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+    .content-area {
+        padding: 20px;
+        background: #f8f9fa;
+        height: 100vh;
+    }
+    .form-container {
+      
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        max-width: 1200px;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        color: #1a1a2e;
+        margin-bottom: 20px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 3px solid #3B22C6;
+        padding: 8px;
+    }
+    .section-icon {
+        font-size: 1.2rem;
+        color: #fff;
+        background: linear-gradient(135deg, #3B22C6, #4C8CF1);
+        padding: 6px;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        background: #fff;
+        padding: 10px;
+    }
+
+
+    /* #dcTable thead th {
+    padding: 8px 8px;          
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 15px;
+    text-align: left;
+    }
+
+
+    #dcTable tbody tr {
+    font-size: 14px;          
+    color: #4b5563;
+    text-align: left;          
+    }
+
+    #dcTable tbody td {
+    padding: 6px 5px;         
+    border-bottom: 1px solid #e5e7eb;
+    }
+
+
+    #dcTable tbody tr:hover {
+    background-color: #f9fafb;
+    } */
+
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.75rem;
+        color: #333;
+        border: 1px solid #d3d9e6;
+    }
+    
+    .items-table thead th {
+        /* background: linear-gradient(135deg, #3B22C6, #4C8CF1); */
+         background: white;
+        color: #a19b9b;
+         padding: 12px 15px;
+       font-weight: bold;
+        /* text-transform: uppercase; */
+        letter-spacing: 0.5px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border: 1px solid #d3d9e6; */
+    }
+    /* .items-table tbody tr:nth-child(odd) {
+        background-color: #ffffff !important;
+    }
+    .items-table tbody tr:nth-child(even) {
+        background-color: rgb(178, 192, 231) !important;
+    } */
+    .items-table tbody tr:hover {
+        background-color: #e6f0ff !important;
+        /* transform: translateY(-2px); */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        /* transition: all 0.3s ease; */
+    }
+    .items-table td, .items-table th {
+        /* padding: 12px 15px;
+        vertical-align: middle;
+        border: 1px solid #d3d9e6; */
+         padding: 12px 15px;
+        vertical-align: middle;
+         font-size: 14px;
+      font-weight: 500;
+          color: #6c757d;
+    }
+    .items-table td.text-center {
+        font-style: italic;
+        color: #6c757d;
+    }
+    .btn-sm {
+        padding: 3px 8px;
+        font-size: 10px;
+        font-weight: 400;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #3B22C6, #4C8CF1);
+        border: none;
+        color: #fff;
+    }
+    .btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 34, 198, 0.3);
+        background: linear-gradient(135deg, #4C8CF1, #3B22C6);
+    }
+
+.dataTables_filter {
+    margin-bottom: 10px;
+}
+.dataTables_filter label {
+    font-size: 13px;
+    color: #495057;
+}
+.dataTables_filter input {
+    height: 28px;
+    font-size: 13px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+}
+
+.dataTables_length label {
+    font-size: 13px;
+    color: #495057;
+}
+.dataTables_length select {
+    height: 28px;
+    font-size: 13px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+}
+
+.dataTables_info {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.dataTables_paginate {
+    margin-top: 6px;
+}
+.dataTables_paginate .pagination {
+    font-size: 20px;
+}
+.dataTables_paginate .page-link {
+    padding: 2px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    color: #495057;
+}
+.dataTables_paginate .page-item.active .page-link {
+    background-color: #0d6efd;  
+    border-color: #0d6efd;
+    color: #fff;
+}
+.dataTables_paginate .page-item .page-link:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 15px;
+        }
+        .items-table {
+            font-size: 0.85rem;
+        }
+        .items-table th,
+        .items-table td {
+            padding: 10px;
+        }
+        .btn-sm {
+            width: 100%;
+            justify-content: center;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+$(document).ready(function () {
+    // Function to get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const hasData = {{ delivery_challans|length }} > 0;
+
+    if (hasData) {
+        const table = $('#dcTable').DataTable({
+            paging: true,
+            // searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true,
+            columnDefs: [
+                { orderable: false, targets: [0, 1, 2, 3, 4, 5, 6] } // Disable sorting on Item Name and Action columns
+            ]
+        });
+
+        // Handle DC status updates
+        $(document).on('dcUpdated', function(e, data) {
+            const dcId = data.dcId;
+            const status = data.status;
+            const row = table.row(`tr[data-dc-id="${dcId}"]`);
+
+            if (row.length) {
+                if (status === 'closed') {
+                    row.remove().draw();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Delivery challan closed and moved to Close DC table.',
+                    });
+                } else if (status === 'partial') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Delivery challan moved to Partial DC table.',
+                    });
+                }
+            }
+        });
+
+        // Handle Print button clicks
+        $(document).on('click', '.btn-print', function() {
+            const dcNumber = $(this).data('dc-number');
+            generateReport(dcNumber);
+        });
+
+        // Handle Cancel button clicks
+        $(document).on('click', '.btn-cancel', function() {
+            const dcId = $(this).data('dc-id');
+            const dcNumber = $(this).data('dc-number');
+            cancelDC(dcId, dcNumber);
+        });
+
+        function generateReport(dcNumber) {
+            if (!dcNumber) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Please select a Delivery Challan number.',
+                });
+                return;
+            }
+
+            $('#loading').show();
+
+            fetch('{% url 'delivery_challan_json' "placeholder" %}'.replace('placeholder', dcNumber), {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Delivery Challan not found');
+                }
+                return response.json();
+            })
+            .then(data => {
+                return fetch('{% url 'download_pdf' %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(data.dc)
+                });
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                $('#loading').hide();
+                const url = window.URL.createObjectURL(blob);
+                
+                // Trigger automatic download
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Delivery_Challan_${dcNumber}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Trigger print dialog
+                const printWindow = window.open(url, '_blank');
+                
+                if (printWindow) {
+                    printWindow.onload = function() {
+                        try {
+                            printWindow.print();
+                            printWindow.onafterprint = function() {
+                                printWindow.close();
+                                window.URL.revokeObjectURL(url);
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: `Print dialog opened and PDF downloaded for Delivery Challan ${dcNumber}.`,
+                                });
+                            };
+                            // Fallback for browsers that don't support onafterprint
+                            let printDialogClosed = false;
+                            const checkWindowClosed = setInterval(() => {
+                                if (printWindow.closed && !printDialogClosed) {
+                                    printDialogClosed = true;
+                                    clearInterval(checkWindowClosed);
+                                    window.URL.revokeObjectURL(url);
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success',
+                                        text: `Print dialog opened and PDF downloaded for Delivery Challan ${dcNumber}.`,
+                                    });
+                                }
+                            }, 500);
+                        } catch (e) {
+                            console.warn('Could not trigger print:', e);
+                            printWindow.close();
+                            window.URL.revokeObjectURL(url);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: `Print dialog opened and PDF downloaded for Delivery Challan ${dcNumber}.`,
+                            });
+                        }
+                    };
+                } else {
+                    $('#loading').hide();
+                    window.URL.revokeObjectURL(url);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Pop-up Blocked',
+                        text: 'Please allow pop-ups for printing functionality. PDF has been downloaded.',
+                    });
+                }
+            })
+            .catch(error => {
+                $('#loading').hide();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error generating PDF: ' + error.message,
+                });
+            });
+        }
+
+        function cancelDC(dcId, dcNumber) {
+            Swal.fire({
+                title: 'Cancel Delivery Challan',
+                text: `Are you sure you want to cancel DC ${dcNumber}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ffc107',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Cancel it!',
+                cancelButtonText: 'No, keep it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Cancelling...',
+                        text: 'Please wait while we cancel the delivery challan.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Make API call to cancel DC
+                    fetch(`/api/dc/cancel/${dcId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Remove the row from the table
+                            const row = table.row(`tr[data-dc-id="${dcId}"]`);
+                            row.remove().draw();
+                            
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Cancelled!',
+                                text: `Delivery Challan ${dcNumber} has been cancelled successfully.`,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.error || 'Failed to cancel delivery challan.',
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while cancelling the delivery challan.',
+                        });
+                    });
+                }
+            });
+        }
+    }
+});
+</script>
+{% endblock %}

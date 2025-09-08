@@ -1,0 +1,518 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PSL Report</title>
+  <style>
+ @page {
+  size: A4 portrait;
+  margin: 5mm;  /* can reduce to 5mm if needed */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: 8px !important;     /* smaller text to fit single page */
+  line-height: 0.85;          /* tighter line spacing */
+}
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 4px; font-size: 10px; }
+        .section-title { background: #d9e2f3; font-weight: bold; text-align: center; padding: 4px; }
+        .light-blue { background: #edf2f7; }
+        .center { text-align: center; }
+        .logo { width: 120px; }
+        .checkbox { border: 1px solid #000; width: 12px; height: 12px; display: inline-block; }
+        .iso-blue { color: blue; font-weight: bold; }
+        .iso-green { color: green; font-weight: bold; }
+        .iso-red { color: red; font-weight: bold; }
+        
+  </style>
+</head>
+<body>
+<style>
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th, td { border: 1px solid #000; padding: 4px; }
+  th { background: #d9e2f3; text-align: left; font-weight: bold; width: 16%; }
+  td { width: 17%; }
+  .center { text-align: center; }
+  .logo { width: 80px; }
+</style>
+<!-- Header -->
+<table>
+  <tr>
+    <!-- Logo -->
+ <td rowspan="4" colspan="4" style="text-align:center; border:1px solid #000;">
+    <img src="{{ logo }}" alt="logo" class="logo"  />
+</td>
+
+    <td colspan="6" class="center" style="background:#d9e2f3; font-weight:bold;">
+      ABIPET TECHNOLOGIES PRIVATE LIMITED
+    </td>
+  </tr>
+  <tr>
+    <td colspan="6" class="center" style="background:#d9e2f3;">
+      INTEGRATED MANAGEMENT SYSTEM<br>
+      (ISO 9001:2015, 5th Edition • API Spec Q1, 10th Edition • ISO 14001:2015, 3rd Edition • ISO 45001:2018, 1st Edition • API Spec 6A, 21st Edition)
+    </td>
+  </tr>
+  <tr>
+    <td colspan="6" class="center" style="background:#d9e2f3; font-weight:bold;">
+      LEVEL 04 - QHSE - IMS - FACTORY ACCEPTANCE TESTING - {{ psl_level|default:"PSL3" }} MANUAL GATE VALVE
+    </td>
+  </tr>
+  <!-- Process row -->
+ <tr style="height:10px;border-bottom:none ;">
+  <th style="padding:2px; width:10%;">Process</th>
+  <td style="padding:2px; width:10%;">09 / OPS</td>
+  <th style="padding:2px; width:10%;">Level</th>
+  <td style="padding:2px; width:10%;">L04 / OPS</td>
+  <th style="padding:2px; width:16%;">Procedure Ref. No.</th>
+  <td style="padding:2px; width:16%;">AP-P09-OPS-L02-10</td>
+</tr>
+</table>
+
+
+<!-- Meta Data (Process row removed) -->
+<table style="border-top: none;">
+  <tr>
+    <th >Document Number</th><td>AP-P09--OPS-AT-L04-05</td>
+    <th>Issue No. / Date</th><td>01 / 01-07-2024</td>
+    <th>Rev No. / Date</th><td>00 / 01-07-2024</td>
+  </tr>
+  <tr>
+    <th>Part Description :</th><td>{{ part_description|default:"" }}</td>
+    <th>Pressure Rating</th><td>{{ hydroshell_P|default:"" }}</td>
+    <th>Test Specification / Revision</th><td>{{ test_specification|default:"" }}</td>
+  </tr>
+  <tr>
+    <th>Part No. / Revision :</th><td>{{ part_no_revision|default:"" }}</td>
+    <th>PSL Level</th><td>{{ psl_level|default:"" }}</td>
+    <th>Work Instruction Ref.</th><td>{{ work_instruction_ref|default:"" }}</td>
+  </tr>
+  <tr>
+    <th>Drawing No. / Revision :</th><td>{{ drawing_no_revision|default:"" }}</td>
+    <th>Material Class</th><td>{{ material_class|default:"" }}</td>
+    <th>Quality Plan Ref.</th><td>{{ quality_plan_ref|default:"" }}</td>
+  </tr>
+  <tr>
+    <th>Model</th><td>{{ model|default:"" }}</td>
+    <th>Temperature Class</th><td>{{ temperature_class|default:"" }}</td>
+    <th>Assembly Order No</th><td>{{ assembly_order_no|default:"" }}</td>
+  </tr>
+  <tr>
+    <th>Size</th><td>{{ size|default:"" }}</td>
+    <th>Test No</th><td>{{ test_no|default:"" }}</td>
+    <th>Operator Name</th><td>{{ operator_name|default:"" }}</td>
+  </tr>
+  <tr>
+    <th>Work Order No</th><td>{{ work_order_no|default:"" }}</td>
+    <th>Date</th><td>{{ current_date|default:"" }}</td>
+    <th>Assembly Serial No.</th><td>{{ assembly_serial_no|default:"" }}</td>
+  </tr>
+  
+</table>
+
+
+
+<div class="section-title" style="border: 1px solid #000; padding: 6px; font-weight: bold; text-align: center;border-top: none;">
+  Test Medium : <u>70% Mono Ethylene Glycol + 28% DM Water + 2% Cortec Vpci 649 Bd</u>
+</div>
+
+
+<div class="section-title" style="border:1px solid #000; padding:6px; font-weight:bold; text-align:center;border-top: none;border-bottom: none;">
+  HYDRO STATIC SHELL TEST
+</div>
+
+<table style="width:100%; border-collapse:collapse; font-size:10px; text-align:center; border:1px solid black; table-layout:fixed;">
+  <colgroup>
+    <col style="width:10%;">
+    <col style="width:12%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:9%;">
+    <col style="width:9%;">
+  </colgroup>
+  
+  <tr style="background:#d9e2f3; font-weight:bold;">
+    <th style="border:1px solid black; padding:4px;">S.No</th>
+    <th style="border:1px solid black; padding:6px;">STEP</th>
+    <th style="border:1px solid black; padding:6px;">START TIME HRS</th>
+    <th style="border:1px solid black; padding:6px;">START PRESSURE PSI</th>
+    <th style="border:1px solid black; padding:6px;">END TIME HRS</th>
+    <th style="border:1px solid black; padding:6px;">END PRESSURE PSI</th>
+    <th style="border:1px solid black; padding:6px;">PRESSURE CHANGE PSI</th>
+    <th style="border:1px solid black; padding:6px;">HOLD PERIOD MINS</th>
+    <th style="border:1px solid black; padding:6px;">NO VISIBLE LEAK</th>
+    <th style="border:1px solid black; padding:6px;">PRESSURE DROP TO 0 PSI</th>
+  </tr>
+  
+     <tr>
+     <td style="border:1px solid black; padding:6px;background:#d9e2f3">1</td>
+     <td style="border:1px solid black; padding:6px;background:#d9e2f3">PRIMARY</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_primary.start_time|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_primary.start_pressure|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_primary.stop_time|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_primary.stop_pressure|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_primary.result_difference|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;background:#d9e2f3">{{ hydroshell_P_dur|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_primary.result|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_primary.pressure_drop|default:"" }}</td>
+   </tr>
+   
+   <tr>
+     <td style="border:1px solid black; padding:6px;background:#d9e2f3">2</td>
+     <td style="border:1px solid black; padding:6px;background:#d9e2f3">SECONDARY</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_secondary.start_time|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_secondary.start_pressure|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_secondary.stop_time|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_secondary.stop_pressure|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_secondary.result_difference|default:"" }}</td>
+      <td style="border:1px solid black; padding:6px;background:#d9e2f3">{{ hydroshell_S_dur|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_secondary.result|default:"" }}</td>
+     <td style="border:1px solid black; padding:6px;">{{ shell_secondary.pressure_drop|default:"" }}</td>
+   </tr>
+</table>
+
+
+
+<!-- Torque -->
+<div class="section-title" style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 6px; font-weight: bold; text-align: center;">
+  RE-TORQUEING OF BONNET CONNECTIONS STUDS
+</div>
+<table>
+  <tr><th>Torque Value :</th><td>{{torque_value}} Ft-lbs</td><th>Torque Wrench ID :</th><td>{{wrench_id}}</td><th>Due Date :</th><td>{{due_date}}</td></tr>
+</table>
+
+<!-- Seat Test - Side A -->
+<div class="section-title" style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 6px; font-weight: bold; text-align: center;">
+  HYDRO STATIC SEAT TEST - SIDE A
+</div>
+<table style="width:100%; border-collapse:collapse; text-align:center; font-size:13px; table-layout:fixed;">
+   <colgroup>
+    <col style="width:10%;">
+    <col style="width:12%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:9%;">
+    <col style="width:9%;">
+  </colgroup>
+  
+  <tr style="background:#d9e2f3;">
+    <th style="border:1px solid black; padding:4px;">S.No</th>
+    <th style="border:1px solid black; padding:4px;">STEP</th>
+    <th style="border:1px solid black; padding:4px;">START TIME HRS</th>
+    <th style="border:1px solid black; padding:4px;">START PRESSURE PSI</th>
+    <th style="border:1px solid black; padding:4px;">END TIME HRS</th>
+    <th style="border:1px solid black; padding:4px;">END PRESSURE PSI</th>
+    <th style="border:1px solid black; padding:4px;">PRESSURE CHANGE PSI</th>
+    <th style="border:1px solid black; padding:4px;">HOLD PERIOD MINS</th>
+    <th style="border:1px solid black; padding:4px;">NO VISIBLE LEAK</th>
+    <th style="border:1px solid black; padding:4px;">PRESSURE DROP TO 0 PSI</th>
+  </tr>
+
+           <tr>
+      <td style="border:1px solid black; background:#d9e2f3; padding:4px;">1</td>
+      <td style="border:1px solid black; background:#d9e2f3; padding:4px;">PRIMARY</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_primary.start_time|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_primary.start_pressure|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_primary.stop_time|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_primary.stop_pressure|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_primary.result_difference|default:"" }}</td>
+      <td style="border:1px solid black; background:#d9e2f3; padding:4px;">{{ hydroseat_A_P_dur|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_primary.result|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_primary.pressure_drop|default:"" }}</td>
+    </tr>
+  
+    <tr>
+      <td style="border:1px solid black; background:#d9e2f3; padding:4px;">2</td>
+      <td style="border:1px solid black; background:#d9e2f3; padding:4px;">SECONDARY</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_secondary.start_time|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_secondary.start_pressure|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_secondary.stop_time|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_secondary.stop_pressure|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_secondary.result_difference|default:"" }}</td>
+      <td style="border:1px solid black; background:#d9e2f3; padding:4px;">{{ hydroseat_A_S_dur|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_secondary.result|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_secondary.pressure_drop|default:"" }}</td>
+    </tr>
+  
+    <tr>
+      <td style="border:1px solid black; background:#d9e2f3; padding:4px;">3</td>
+      <td style="border:1px solid black; background:#d9e2f3; padding:4px;">TERTIARY</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_tertiary.start_time|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_tertiary.start_pressure|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_tertiary.stop_time|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_tertiary.stop_pressure|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_tertiary.result_difference|default:"" }}</td>
+      <td style="border:1px solid black; background:#d9e2f3; padding:4px;">{{ hydroseat_A_T_dur|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_tertiary.result|default:"" }}</td>
+      <td style="border:1px solid black; padding:4px;">{{ seat_a_tertiary.pressure_drop|default:"" }}</td>
+    </tr>
+</table>
+
+
+
+<!-- Seat Test - Side B -->
+<div class="section-title" style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 6px; font-weight: bold; text-align: center;">
+  HYDRO STATIC SEAT TEST - SIDE B
+</div>
+<table style="width:100%; border-collapse:collapse; text-align:center; font-size:13px; table-layout:fixed;">
+    <colgroup>
+    <col style="width:10%;">
+    <col style="width:12%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:10%;">
+    <col style="width:9%;">
+    <col style="width:9%;">
+  </colgroup>
+  <tr style="background:#d9e2f3;">
+    <th style="border:1px solid black; ">S.No</th>
+    <th style="border:1px solid black;">STEP</th>
+    <th style="border:1px solid black; ">START TIME HRS</th>
+    <th style="border:1px solid black; ">START PRESSURE PSI</th>
+    <th style="border:1px solid black;">END TIME HRS</th>
+    <th style="border:1px solid black; ">END PRESSURE PSI</th>
+    <th style="border:1px solid black;">PRESSURE CHANGE PSI</th>
+    <th style="border:1px solid black;">HOLD PERIOD MINS</th>
+    <th style="border:1px solid black; ">NO VISIBLE LEAK</th>
+    <th style="border:1px solid black; ">PRESSURE DROP TO 0 PSI</th>
+  </tr>
+           <tr>
+      <td style="border:1px solid black;background:#d9e2f3;">1</td>
+      <td style="border:1px solid black;background:#d9e2f3;">PRIMARY</td>
+      <td style="border:1px solid black;">{{ seat_b_primary.start_time|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_primary.start_pressure|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_primary.stop_time|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_primary.stop_pressure|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_primary.result_difference|default:"" }}</td>
+      <td style="border:1px solid black;background:#d9e2f3;">{{ hydroseat_B_P_dur|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_primary.result|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_primary.pressure_drop|default:"" }}</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid black;background:#d9e2f3;">2</td>
+      <td style="border:1px solid black;background:#d9e2f3;">SECONDARY</td>
+      <td style="border:1px solid black;">{{ seat_b_secondary.start_time|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_secondary.start_pressure|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_secondary.stop_time|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_secondary.stop_pressure|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_secondary.result_difference|default:"" }}</td>
+      <td style="border:1px solid black;background:#d9e2f3;">{{ hydroseat_B_S_dur|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_secondary.result|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_secondary.pressure_drop|default:"" }}</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid black;background:#d9e2f3;">3</td>
+      <td style="border:1px solid black;background:#d9e2f3;">TERTIARY</td>
+      <td style="border:1px solid black;">{{ seat_b_tertiary.start_time|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_tertiary.start_pressure|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_tertiary.stop_time|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_tertiary.stop_pressure|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_tertiary.result_difference|default:"" }}</td>
+      <td style="border:1px solid black;background:#d9e2f3;">{{ hydroseat_B_T_dur|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_tertiary.result|default:"" }}</td>
+      <td style="border:1px solid black;">{{ seat_b_tertiary.pressure_drop|default:"" }}</td>
+    </tr>
+</table>
+
+
+<!-- Drift Test -->
+<div class="section-title" style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 6px; font-weight: bold; text-align: center;">
+  DRIFT TEST
+</div>
+<table style="width:100%; border-collapse:collapse; table-layout:fixed; text-align:center;">
+    
+  <tr style="background:#d9e2f3;">
+    <th style="border:1px solid black; width:10.5%;">S.No</th>
+    <th style="border:1px solid black; width:10.5%;">Tested Date</th>
+    <th style="border:1px solid black; width:10.5%;">Test Fluid Drain</th>
+    <th style="border:1px solid black; width:10.5%;">Drift Test A to B &amp; B to A</th>
+    <th style="border:1px solid black; width:10.5%;">Drift Shaft ID</th>
+    <th style="border:1px solid black; width:10.5%;">Calibrated On</th>
+    <th style="border:1px solid black; width:10.5%;">Due On</th>
+    <th style="border:1px solid black; width:10.5%;">Greasing</th>
+  </tr>
+  <tr>
+    <td style="border:1px solid black;">1</td>
+    <td style="border:1px solid black;"></td>
+    <td style="border:1px solid black;"></td>
+    <td style="border:1px solid black;"></td>
+    <td style="border:1px solid black;"></td>
+    <td style="border:1px solid black;"></td>
+    <td style="border:1px solid black;"></td>
+    <td style="border:1px solid black;"></td>
+  </tr>
+</table>
+
+
+<!-- Test Conclusion -->
+<div style="text-align: center; font-size: 10px; border-left: 1px solid #000; border-right: 1px solid #000; padding: 5px 0;">
+  <span style="margin: 0 15px;"><b>Test Conclusion</b></span>
+  
+  <span style="margin: 0 15px;">
+    Passed 
+    <span class="checkbox" style="display: inline-block; width: 10px; height: 10px; border: 1px solid black; margin-left: 5px;"></span>
+  </span>
+  
+  <span style="margin: 0 15px;">
+    Fail 
+    <span class="checkbox" style="display: inline-block; width: 10px; height: 10px; border: 1px solid black; margin-left: 5px;"></span>
+  </span>
+</div>
+
+
+<table style="width: 100%; border:1px solid #000; border-collapse: collapse; font-size: 11px;">
+  <tr>
+    <th colspan="2" style="border:1px solid #000; background:#d9e2f3; text-align:center; padding:4px; width:40%;">Inspection Check Points</th>
+    <th style="background:#d9e2f3; text-align:center; padding:4px; width:60%; ">Acceptance Criteria</th>
+  </tr>
+
+  <tr>
+    <td style="border:1px solid #000; background:#ddebf7; font-weight:bold; padding:5px;">1. Test Fixtures</td>
+    <td style="border:1px solid #000; padding:4px;">{{ fixture|default:"Used / Not Used" }}</td>
+    <td style="padding:4px; border:none;">1. The equipment shall show no visible leakage while subjected to test pressure.</td>
+  </tr>
+
+  <tr>
+    <td style="border:1px solid #000; background:#ddebf7; font-weight:bold; padding:4px;">2. Shall Testing performed<br>prior to addition of Body Filler Grease</td>
+    <td style="border:1px solid #000; padding:4px;">{{ grease|default:"Yes / No" }}</td>
+    <td style="padding:4px; border:none;">2. At the start of the hold period, monitored pressure shall not be greater than 5% above the specified test pressure.</td>
+  </tr>
+
+  <tr>
+    <td style="border:1px solid #000; background:#ddebf7; font-weight:bold; padding:4px;">3. Shall Testing performed<br>prior to Painting</td>
+    <td style="border:1px solid #000; padding:4px;">{{ painting|default:"Yes / No" }}</td>
+    <td style="padding:4px; border:none;">3. During the hold period, the pressure shall not vary from the pressure at the start of the hold period by more than 5% or 3.45 MPa (500 psi), whichever is less.</td>
+  </tr>
+
+  <tr>
+    <td style="border:1px solid #000; background:#ddebf7; font-weight:bold; padding:4px;">4. Fittings are Installed</td>
+    <td style="border:1px solid #000; padding:4px;">{{ fittings|default:"Yes / No" }}</td>
+    <td style="padding:4px;border-top:none; ">4. Monitored pressure shall not be less than the specified test pressure.</td>
+  </tr>
+
+  <tr>
+    <td style="border:1px solid #000; background:#ddebf7; font-weight:bold; padding:4px;">5. Valve Position during Shell Test</td>
+    <td style="border:1px solid #000; padding:4px;">{{ shell_position|default:"" }}</td>
+    <td style="padding:4px;border: none;">Remarks</td>
+  </tr>
+
+  <tr>
+    <td style="border:1px solid #000; background:#ddebf7; font-weight:bold; padding:4px;">6. Valve Position during Seat Test</td>
+    <td style="border:1px solid #000; padding:4px;">{{ seat_position|default:"" }}</td>
+    <td style="padding:4px;border: none;"></td>
+    
+  </tr>
+
+ 
+</table>
+
+
+
+
+
+<!-- Sign-off -->
+<!-- Sign-off Section -->
+<table style="width:100%; border-collapse:collapse; font-size:10px; border:1px solid #000;">
+  <tr>
+    <th colspan="2" style="border:1px solid #000; background:#d9e2f3; text-align:center; padding:4px;">Tested by</th>
+    <th colspan="2" style="border:1px solid #000; background:#d9e2f3; text-align:center; padding:4px;">Verified by</th>
+    <th colspan="2" style="border:1px solid #000; background:#d9e2f3; text-align:center; padding:4px;">Approved by</th>
+  </tr>
+  <tr>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Name</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;">{{ tested_by|default:"" }}</td>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Name</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;">{{ verified_by|default:"" }}</td>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Name</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;">{{ approved_by|default:"" }}</td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Position</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;">Operator</td>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Position</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;">Inspector</td>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Position</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;">Manager</td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Signature</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;"></td>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Signature</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;"></td>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Signature</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;"></td>
+  </tr>
+  <tr>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Date</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;">{{ current_date|default:"" }}</td>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Date</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;">{{ current_date|default:"" }}</td>
+    <td style="border:1px solid #000; background:#d9e2f3; padding:6px;">Date</td>
+    <td style="border:1px solid #000; background:#ffffff; padding:6px;">{{ current_date|default:"" }}</td>
+  <tr style="text-align: center;">
+  <td style="border:1px solid #000; padding:2px;">
+    <span style="font-weight:bold;">ISO 9001:2015,<br>5th Edition</span>
+  </td>
+  <td style="border:1px solid #000; padding:2px;">
+    <span style="color:blue; font-weight:bold;">API Spec Q1,<br>10th Edition</span>
+  </td>
+  <td style="border:1px solid #000; padding:2px;">
+    <span style="color:green; font-weight:bold;">ISO 14001:2015,<br>3rd Edition</span>
+  </td>
+  <td style="border:1px solid #000; padding:2px;">
+    <span style="color:red; font-weight:bold;">ISO 45001:2018,<br>1st Edition</span>
+  </td>
+  <td style="border:1px solid #000; padding:2px;">
+    <span style="color:blue; font-weight:bold;">API Spec 6A,<br>21st Edition</span>
+  </td>
+  <td style="border:1px solid #000; text-align:center; padding:2px; background-color:#d9e2f3;">
+    ABIPET Internal Requirements
+  </td>
+</tr>
+
+<tr style="text-align: center;">
+  <td style="border:1px solid #000; padding:2px;">
+    <span style="font-weight:bold;">8.5.1, 8.5.2
+  </td>
+  <td style="border:1px solid #000; padding:2px;">
+  
+    <span style="color:blue;">5.6.3, 5.6.5, 5.6.9.3</span>
+  </td>
+  <td style="border:1px solid #000; padding:2px;">
+    <span style="color:green;">–</span>
+  </td>
+  <td style="border:1px solid #000; padding:2px;">
+    <span style="color:red;">–</span>
+  </td>
+  <td style="border:1px solid #000; padding:2px;">
+    <span style="color:blue;">
+      11.1.4, 11.2.2,11.2.3, 11.2.3.1,<br>11.2.3.2, 11.2.4, 11.2.4.3, 11.4
+    </span>
+  </td>
+  <td style="border:1px solid #000; text-align:center; padding:2px;">
+  </td>
+</tr>
+
+
+</table>
+
+
+
+
+
+</body>
+</html>
