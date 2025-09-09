@@ -1,0 +1,841 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teslead Dashboard{% endblock %}
+{% block page_title %}
+< Item List 
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+    .content-area {
+        padding: 20px;
+        background: #f8f9fa;
+        min-height: 100vh;
+    }
+    
+    .form-container {
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        max-width: 1200px;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        color: #1a1a2e;
+        margin-bottom: 20px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 3px solid #3B22C6;
+        padding-bottom: 8px;
+    }
+    .section-icon {
+        font-size: 1.2rem;
+        color: #fff;
+        background: linear-gradient(135deg, #3B22C6, #4C8CF1);
+        padding: 6px;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        background: #fff;
+    }
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+        color: #333;
+        border: 1px solid #d3d9e6;
+    }
+    .items-table thead th {
+        background: linear-gradient(135deg, #3B22C6, #4C8CF1);
+        color: #ffffff;
+        padding: 12px 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border: 1px solid #d3d9e6;
+    }
+    .items-table tbody tr:nth-child(odd) {
+        background-color: #ffffff !important;
+    }
+    .items-table tbody tr:nth-child(even) {
+        background-color: rgb(178, 192, 231) !important;
+    }
+    .items-table tbody tr:hover {
+        background-color: #e6f0ff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    .items-table td, .items-table th {
+        padding: 12px 15px;
+        vertical-align: middle;
+        border-bottom: 1px solid #d3d9e6;
+    }
+    .items-table td.text-center {
+        font-style: italic;
+        color: #6c757d;
+    }
+    .btn-sm {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #3B22C6, #4C8CF1);
+        border: none;
+        color: #fff;
+    }
+    .btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 34, 198, 0.3);
+        background: linear-gradient(135deg, #4C8CF1, #3B22C6);
+    }
+    .create-btn {
+        background: linear-gradient(135deg, #28a745, #38c172);
+    }
+    .create-btn:hover {
+        background: linear-gradient(135deg, #38c172, #28a745);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+    .delete-btn {
+        background: linear-gradient(135deg, #ff4757, #ff6b81);
+    }
+    .delete-btn:hover {
+        background: linear-gradient(135deg, #ff6b81, #ff4757);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+    }
+    .view-btn {
+        background: linear-gradient(135deg, #17a2b8, #2fb8d1);
+    }
+    .view-btn:hover {
+        background: linear-gradient(135deg, #2fb8d1, #17a2b8);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+    }
+    .back-btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+    .modal-header {
+        background: linear-gradient(135deg, #3B22C6, #4C8CF1);
+        color: #ffffff;
+        border-radius: 12px 12px 0 0;
+        padding: 15px 20px;
+    }
+    .modal-title {
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+    .modal-body {
+        padding: 20px;
+        background: #ffffff;
+    }
+    .form-control {
+        border-radius: 6px;
+        font-size: 0.9rem;
+        padding: 10px;
+        border: 1px solid #d3d9e6;
+        display: block;
+        width: 100%;
+    }
+    .form-control:focus {
+        border-color: #3B22C6;
+        box-shadow: 0 0 5px rgba(59, 34, 198, 0.3);
+    }
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #1a1a2e;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .required:after {
+        content: " *";
+        color: red;
+    }
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    .form-group select.form-control {
+        margin-top: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 15px;
+        }
+        .items-table {
+            font-size: 0.85rem;
+        }
+        .items-table th,
+        .items-table td {
+            padding: 10px;
+        }
+        .btn-sm {
+            width: 100%;
+            justify-content: center;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .modal-dialog {
+            max-width: 95%;
+        }
+        .modal-body .row {
+            flex-direction: column;
+        }
+        .modal-body .col-md-4,
+        .modal-body .col-md-6 {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="form-container">
+        <!-- <h2 class="section-title">
+            <i class="fas fa-box section-icon"></i> Items List
+        </h2> -->
+        <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-sm create-btn" data-bs-toggle="modal" data-bs-target="#createItemModal">
+                <i class="fas fa-plus"></i> Create Item
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table items-table" id="itemTable">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Item Name</th>
+                        <th>UOM</th>
+                        <th>Quantity</th>
+                        <th>Project Name</th>
+                        <th>Remarks</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr data-item-id="{{ item.id }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.uom }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.project_name|default_if_none:"-" }}</td>
+                        <td>{{ item.remarks|default_if_none:"-" }}</td>
+                        <td>
+                            <button class="btn btn-sm view-btn" onclick="viewItem('{{ item.id }}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm" onclick="editItem('{{ item.id }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm delete-btn" onclick="deleteItem('{{ item.id }}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No items found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="back-btn-container">
+            <button class="btn btn-sm" onclick="window.history.back()" title="Back">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Item Modal -->
+<div class="modal fade" id="createItemModal" tabindex="-1" aria-labelledby="createItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createItemModalLabel">Create New Item</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createItemForm">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="item_name" class="form-label required">Item Name</label>
+                                <input type="text" class="form-control" id="item_name" name="item_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="description" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="description" name="description">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="uomSelect" class="form-label required">UOM</label>
+                                <select class="form-control" id="uomSelect" name="uom" required>
+                                    <option value="">Select UOM</option>
+                                    <option value="KG">Kilogram (KG)</option>
+                                    <option value="NOS">Nos</option>
+                                    <option value="LTR">Litre (LTR)</option>
+                                    <option value="MTR">Metre (MTR)</option>
+                                    <option value="SQFT">Square Foot (SQFT)</option>
+                                    <option value="CUM">Cubic Metre (CUM)</option>
+                                    <option value="TON">Tonne (TON)</option>
+                                    <option value="SET">Set</option>
+                                    <option value="BAG">Bag</option>
+                                    <option value="BOX">Box</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="quantity" class="form-label required">Quantity</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" min="0" step="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="weight" class="form-label required">weight</label>
+                                <input type="number" class="form-control" id="weight" name="weight" min="0" step="1" required>
+                            </div>
+                        </div>
+                           <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="Square_feet" class="form-label required">Square_feet</label>
+                                <input type="number" class="form-control" id="square_feet" name="square_feet" min="0" step="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="rate_per_each" class="form-label required">Rate Per Each</label>
+                                <input type="number" class="form-control" id="rate_per_each" name="rate_per_each" min="0" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="project_name" class="form-label">Project Name</label>
+                                <input type="text" class="form-control" id="project_name" name="project_name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="project_incharge" class="form-label">Project Incharge</label>
+                                <input type="text" class="form-control" id="project_incharge" name="project_incharge">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="remarks" class="form-label">Remarks</label>
+                                <input type="text" class="form-control" id="remarks" name="remarks">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-sm delete-btn" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Editable Item Modal -->
+<div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editItemModalLabel">Edit Item</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editItemForm">
+                    <input type="hidden" id="edit-item-id" name="id">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-item_name" class="form-label required">Item Name</label>
+                                <input type="text" class="form-control" id="edit-item_name" name="item_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-description" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="edit-description" name="description">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-uomSelect" class="form-label required">UOM</label>
+                                <select class="form-control" id="edit-uomSelect" name="uom" required>
+                                    <option value="">Select UOM</option>
+                                    <option value="KG">Kilogram (KG)</option>
+                                    <option value="NOS">Nos</option>
+                                    <option value="LTR">Litre (LTR)</option>
+                                    <option value="MTR">Metre (MTR)</option>
+                                    <option value="SQFT">Square Foot (SQFT)</option>
+                                    <option value="CUM">Cubic Metre (CUM)</option>
+                                    <option value="TON">Tonne (TON)</option>
+                                    <option value="SET">Set</option>
+                                    <option value="BAG">Bag</option>
+                                    <option value="BOX">Box</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-quantity" class="form-label required">Quantity</label>
+                                <input type="number" class="form-control" id="edit-quantity" name="quantity" min="0" step="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="weight" class="form-label required">weight</label>
+                                <input type="number" class="form-control" id="weight" name="weight" min="0" step="1" required>
+                            </div>
+                        </div>
+                           <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="Square_feet" class="form-label required">Square_feet</label>
+                                <input type="number" class="form-control" id="square_feet" name="square_feet" min="0" step="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-rate_per_each" class="form-label required">Rate Per Each</label>
+                                <input type="number" class="form-control" id="edit-rate_per_each" name="rate_per_each" min="0" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="edit-project_name" class="form-label">Project Name</label>
+                                <input type="text" class="form-control" id="edit-project_name" name="project_name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="edit-project_incharge" class="form-label">Project Incharge</label>
+                                <input type="text" class="form-control" id="edit-project_incharge" name="project_incharge">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="edit-remarks" class="form-label">Remarks</label>
+                                <input type="text" class="form-control" id="edit-remarks" name="remarks">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-sm delete-btn" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Item Modal -->
+<div class="modal fade" id="viewItemModal" tabindex="-1" aria-labelledby="viewItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewItemModalLabel">Item Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Item Name</label>
+                        <p id="view-item_name" class="form-control-static"></p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Description</label>
+                        <p id="view-description" class="form-control-static"></p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">UOM</label>
+                        <p id="view-uom" class="form-control-static"></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Quantity</label>
+                        <p id="view-quantity" class="form-control-static"></p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">weight</label>
+                        <p id="view-weight" class="form-control-static"></p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Square_feet</label>
+                        <p id="view-square_feet" class="form-control-static"></p>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Rate Per Each</label>
+                        <p id="view-rate_per_each" class="form-control-static"></p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Project Name</label>
+                        <p id="view-project_name" class="form-control-static"></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Project Incharge</label>
+                        <p id="view-project_incharge" class="form-control-static"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Remarks</label>
+                        <p id="view-remarks" class="form-control-static"></p>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-sm delete-btn" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.1/sweetalert2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.1/sweetalert2.min.css" rel="stylesheet">
+<script>
+function viewItem(itemId) {
+    fetch(`/api/view_item/${itemId}/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.status === 403) {
+            throw new Error('User not authenticated. Please log in.');
+        }
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Server error: ${response.status} - ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            const item = data.item;
+            document.getElementById('view-item_name').textContent = item.item_name || '-';
+            document.getElementById('view-description').textContent = item.description || '-';
+            document.getElementById('view-uom').textContent = item.uom || '-';
+            document.getElementById('view-quantity').textContent = item.quantity || '-';
+            document.getElementById('view-weight').textContent = item.weight || '-';
+            document.getElementById('view-square_feet').textContent = item.square_feet
+            document.getElementById('view-rate_per_each').textContent = item.rate_per_each || '-';
+            document.getElementById('view-project_name').textContent = item.project_name || '-';
+            document.getElementById('view-project_incharge').textContent = item.project_incharge || '-';
+            document.getElementById('view-remarks').textContent = item.remarks || '-';
+            const viewModal = new bootstrap.Modal(document.getElementById('viewItemModal'));
+            viewModal.show();
+        } else {
+            Swal.fire('Error', data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        Swal.fire('Error', 'Something went wrong: ' + error.message, 'error');
+    });
+}
+
+function editItem(itemId) {
+    fetch(`/api/view_item/${itemId}/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.status === 403) {
+            throw new Error('User not authenticated. Please log in.');
+        }
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Server error: ${response.status} - ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            const item = data.item;
+            document.getElementById('edit-item-id').value = itemId;
+            document.getElementById('edit-item_name').value = item.item_name || '';
+            document.getElementById('edit-description').value = item.description || '';
+            document.getElementById('edit-uomSelect').value = item.uom || '';
+            document.getElementById('edit-quantity').value = item.quantity || '';
+            document.getElementById('weight').value = item.weight || '';
+            document.getElementById('square_feet').value = item.square_feet || '';
+            document.getElementById('edit-rate_per_each').value = item.rate_per_each || '';
+            document.getElementById('edit-project_name').value = item.project_name || '';
+            document.getElementById('edit-project_incharge').value = item.project_incharge || '';
+            document.getElementById('edit-remarks').value = item.remarks || '';
+            const editModal = new bootstrap.Modal(document.getElementById('editItemModal'));
+            editModal.show();
+        } else {
+            Swal.fire('Error', data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        Swal.fire('Error', 'Something went wrong: ' + error.message, 'error');
+    });
+}
+
+function deleteItem(itemId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `You are about to delete this item.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/api/delete_item/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: itemId })
+            })
+            .then(response => {
+                if (response.status === 403) {
+                    throw new Error('User not authenticated. Please log in.');
+                }
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Server error: ${response.status} - ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: 'Item has been deleted.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                Swal.fire('Error', 'Something went wrong: ' + error.message, 'error');
+            });
+        }
+    });
+}
+
+document.getElementById('createItemForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = {
+        item_name: formData.get('item_name'),
+        description: formData.get('description'),
+        uom: formData.get('uom'),
+        quantity: formData.get('quantity'),
+        weight: formData.get('weight'),
+        square_feet: formData.get('square_feet'),
+        rate_per_each: formData.get('rate_per_each'),
+        project_name: formData.get('project_name'),
+        project_incharge: formData.get('project_incharge'),
+        remarks: formData.get('remarks')
+    };
+
+    // Client-side validation
+    if (!data.item_name || !data.uom || !data.quantity || !data.rate_per_each) {
+        Swal.fire('Error', 'All required fields must be filled.', 'error');
+        return;
+    }
+    if (isNaN(data.quantity) || data.quantity < 0) {
+        Swal.fire('Error', 'Quantity must be a non-negative number.', 'error');
+        return;
+    }
+    if (isNaN(data.rate_per_each) || data.rate_per_each < 0) {
+        Swal.fire('Error', 'Rate Per Each must be a non-negative number.', 'error');
+        return;
+    }
+
+    fetch('/api/create_item/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.status === 403) {
+            throw new Error('User not authenticated. Please log in.');
+        }
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Server error: ${response.status} - ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            Swal.fire({
+                title: 'Created!',
+                text: 'Item has been created successfully.',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.reload();
+            });
+            form.reset();
+            bootstrap.Modal.getInstance(document.getElementById('createItemModal')).hide();
+        } else {
+            Swal.fire('Error', data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        Swal.fire('Error', 'Something went wrong: ' + error.message, 'error');
+    });
+});
+
+document.getElementById('editItemForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = {
+        id: formData.get('id'),
+        item_name: formData.get('item_name'),
+        description: formData.get('description'),
+        uom: formData.get('uom'),
+        quantity: formData.get('quantity'),
+        weight: formData.get('weight'),
+        square_feet: formData.get('square_feet'),
+        rate_per_each: formData.get('rate_per_each'),
+        project_name: formData.get('project_name'),
+        project_incharge: formData.get('project_incharge'),
+        remarks: formData.get('remarks')
+    };
+
+    // Client-side validation
+    if (!data.item_name || !data.uom || !data.quantity || !data.rate_per_each) {
+        Swal.fire('Error', 'All required fields must be filled.', 'error');
+        return;
+    }
+    if (isNaN(data.quantity) || data.quantity < 0) {
+        Swal.fire('Error', 'Quantity must be a non-negative number.', 'error');
+        return;
+    }
+    if (isNaN(data.rate_per_each) || data.rate_per_each < 0) {
+        Swal.fire('Error', 'Rate Per Each must be a non-negative number.', 'error');
+        return;
+    }
+
+    fetch('/api/edit_item/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.status === 403) {
+            throw new Error('User not authenticated. Please log in.');
+        }
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Server error: ${response.status} - ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            Swal.fire({
+                title: 'Updated!',
+                text: 'Item has been updated successfully.',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.reload();
+            });
+            bootstrap.Modal.getInstance(document.getElementById('editItemModal')).hide();
+        } else {
+            Swal.fire('Error', data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        Swal.fire('Error', 'Something went wrong: ' + error.message, 'error');
+    });
+});
+</script>
+{% endblock %}

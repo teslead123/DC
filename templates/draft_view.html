@@ -1,0 +1,1048 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}View Draft Delivery Challan{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-6xl">
+    <!-- Supplier Information -->
+    <div class="bg-white rounded-2xl shadow-md mb-6 overflow-hidden border border-gray-100">
+        <div class="flex items-center justify-between p-4 cursor-pointer bg-gradient-to-r from-indigo-500 to-indigo-600 text-white" onclick="toggleSection('supplier-content')">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-minus text-white" id="supplier-icon"></i>
+                <h2 class="text-lg font-semibold">Supplier Details</h2>
+            </div>
+        </div>
+        <div id="supplier-content" class="p-6 transition-all duration-300">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Supplier Name</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.buyerName|default:'-' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Address Line 1</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.buyerAddress1|default:'-' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Address Line 2</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.buyerAddress2|default:'-' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">State</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.buyerState|default:'-' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">City</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.buyerCity|default:'-' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Pincode</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.buyerPincode|default:'-' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">GSTIN</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.buyerGstin|default:'-' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">State Code</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.buyerStateCode|default:'-' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DC Details -->
+    <div class="bg-white rounded-2xl shadow-md mb-6 overflow-hidden border border-gray-100">
+        <div class="flex items-center justify-between p-4 cursor-pointer bg-gradient-to-r from-indigo-500 to-indigo-600 text-white" onclick="toggleSection('dc-content')">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-minus text-white" id="dc-icon"></i>
+                <h2 class="text-lg font-semibold">Delivery Challan Details</h2>
+            </div>
+        </div>
+        <div id="dc-content" class="p-6 transition-all duration-300">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">DC Type</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.dcType|default:'' }}></p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">DC Number</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.dcNo|default:'Not Generated' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">DC Date</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.dcDate|date:'Y-m-d'|default:'-' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Process</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.process|default:'-' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Vehicle No</label>
+                    <p class="mt-2 text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.vehicleNo|default:'-' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Items Details -->
+    <div class="bg-white rounded-2xl shadow-md mb-6 overflow-hidden border border-gray-100">
+        <div class="flex items-center justify-between p-4 cursor-pointer bg-gradient-to-r from-indigo-500 to-indigo-600 text-white" onclick="toggleSection('items-content')">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-minus text-white" id="items-icon"></i>
+                <h2 class="text-lg font-semibold">Items Details</h2>
+            </div>
+        </div>
+        <div id="items-content" class="p-6 transition-all duration-300">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-600">
+                    <thead class="text-xs text-white uppercase bg-indigo-600">
+                        <tr>
+                            <th class="py-3 px-4">S.No</th>
+                            <th class="py-3 px-4">Item Name</th>
+                            <th class="py-3 px-4">Description</th>
+                            <th class="py-3 px-4">UOM</th>
+                            <th class="py-3 px-4">Quantity</th>
+                            <th class="py-3 px-4 {% if not dc.show_weight %}hidden{% endif %}">Weight/Unit</th>
+                            <th class="py-3 px-4 {% if not dc.show_weight %}hidden{% endif %}">Total Weight</th>
+                            <th class="py-3 px-4 {% if not dc.show_square_feet %}hidden{% endif %}">Square Feet/Unit</th>
+                            <th class="py-3 px-4 {% if not dc.show_square_feet %}hidden{% endif %}">Total Square Feet</th>
+                            <th class="py-3 px-4">Rate</th>
+                            <th class="py-3 px-4">Project Name</th>
+                            <th class="py-3 px-4">Project Incharge</th>
+                            <th class="py-3 px-4">Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr class="border-b bg-gray-50 hover:bg-gray-100">
+                            <td class="py-3 px-4">{{ forloop.counter }}</td>
+                            <td class="py-3 px-4">{{ item.item_name|default:'-' }}</td>
+                            <td class="py-3 px-4">{{ item.description|default:'-' }}</td>
+                            <td class="py-3 px-4">{{ item.uom|default:'-' }}</td>
+                            <td class="py-3 px-4">{{ item.quantity|default:'-' }}</td>
+                            <td class="py-3 px-4 {% if not dc.show_weight %}hidden{% endif %}">{{ item.weight_per_unit|default:'-' }}</td>
+                            <td class="py-3 px-4 {% if not dc.show_weight %}hidden{% endif %}">{{ item.weight|default:'-' }}</td>
+                            <td class="py-3 px-4 {% if not dc.show_square_feet %}hidden{% endif %}">{{ item.square_feet_per_unit|default:'-' }}</td>
+                            <td class="py-3 px-4 {% if not dc.show_square_feet %}hidden{% endif %}">{{ item.square_feet|default:'-' }}</td>
+                            <td class="py-3 px-4">{{ item.rate_per_each|default:'-' }}</td>
+                            <td class="py-3 px-4">{{ item.project_name|default:'-' }}</td>
+                            <td class="py-3 px-4">{{ item.project_incharge|default:'-' }}</td>
+                            <td class="py-3 px-4">{{ item.remarks|default:'-' }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="13" class="py-3 px-4 text-center">No items found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="bg-white rounded-2xl shadow-md mb-6 overflow-hidden border border-gray-100">
+        <div class="flex items-center justify-between p-4 cursor-pointer bg-gradient-to-r from-indigo-500 to-indigo-600 text-white" onclick="toggleSection('notes-content')">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-minus text-white" id="notes-icon"></i>
+                <h2 class="text-lg font-semibold">Notes</h2>
+            </div>
+        </div>
+        <div id="notes-content" class="p-6 transition-all duration-300">
+            <p class="text-gray-800 bg-gray-50 p-3 rounded-lg">{{ dc.notes|default:'-' }}</p>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap gap-4 justify-center">
+        <button onclick="goBack()" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition duration-200">Back</button>
+        <button data-bs-toggle="modal" data-bs-target="#editModal" class="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition duration-200">Edit</button>
+        <button onclick="saveDeliveryNote('{{ dc.draft_id|escapejs }}')" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-200">Save</button>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content rounded-2xl shadow-xl">
+                <div class="modal-header bg-gradient-to-r from-indigo-600 to-indigo-700 text-white border-b-0 p-5">
+                    <h5 class="modal-title text-xl font-semibold" id="editModalLabel">Edit Draft Delivery Challan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body max-h-[75vh] overflow-y-auto p-8 bg-gray-50">
+                    <form id="editForm">
+                        {% csrf_token %}
+                        <!-- Supplier Information -->
+                        <div class="mb-8 bg-white p-6 rounded-xl shadow-sm">
+                            <h6 class="text-xl font-semibold text-gray-800 mb-4">Supplier Information</h6>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">Supplier Name <span class="required">*</span></label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition supplier-autocomplete" name="buyerName" value="{{ dc.buyerName|default:'' }}" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">Address Line 1 <span class="required">*</span></label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="buyerAddress1" value="{{ dc.buyerAddress1|default:'' }}" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">Address Line 2</label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="buyerAddress2" value="{{ dc.buyerAddress2|default:'' }}">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">State <span class="required">*</span></label>
+                                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="buyerState" id="buyerState" required>
+                                        <option value="">Select State</option>
+                                        <!-- Populated by JavaScript -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">City <span class="required">*</span></label>
+                                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="buyerCity" id="buyerCity" required>
+                                        <option value="">Select City</option>
+                                        <!-- Populated based on state -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">Pincode <span class="required">*</span></label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="buyerPincode" value="{{ dc.buyerPincode|default:'' }}" required pattern="\d{6}" title="Enter a 6-digit pincode">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">GSTIN</label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="buyerGstin" value="{{ dc.buyerGstin|default:'' }}" pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}" title="Enter a valid 15-character GSTIN">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">State Code <span class="required">*</span></label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="buyerStateCode" id="buyerStateCode" value="{{ dc.buyerStateCode|default:'' }}" required readonly>
+                                </div>
+                                <div>
+                                    <button type="button" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200" id="saveSupplierBtn" onclick="saveNewSupplier()">Save Supplier</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DC Details -->
+                        <div class="mb-8 bg-white p-6 rounded-xl shadow-sm">
+                            <h6 class="text-xl font-semibold text-gray-800 mb-4">DC Details</h6>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">DC Type <span class="required">*</span></label>
+                                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="dcType" required>
+                                        <option value="">Select DC Type</option>
+                                        <option value="SPM" {% if dc.dcType == 'SPM' %}selected{% endif %}>SPM</option>
+                                        <option value="VALVE_SECTION" {% if dc.dcType == 'VALVE_SECTION' %}selected{% endif %}>Valve Section</option>
+                                        <option value="QA" {% if dc.dcType == 'QA' %}selected{% endif %}>QA</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">DC Number</label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed" name="dcNo" id="dcNoInput" readonly value="{{ dc.dcNo|default:'' }}">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">DC Date <span class="required">*</span></label>
+                                    <input type="date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="dcDate" value="{{ dc.dcDate|date:'Y-m-d'|default:'' }}" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">Process <span class="required">*</span></label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="process" value="{{ dc.process|default:'' }}" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">Vehicle No</label>
+                                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" name="vehicleNo" value="{{ dc.vehicleNo|default:'' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Items Details -->
+                        <div class="mb-8 bg-white p-6 rounded-xl shadow-sm">
+                            <h6 class="text-xl font-semibold text-gray-800 mb-4">Items Details</h6>
+                            <div class="flex justify-between mb-3">
+                                <div></div>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="showWeight" {% if dc.show_weight %}checked{% endif %}>
+                                        <label class="form-check-label" for="showWeight">Show Weight</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="showSquareFeet" {% if dc.show_square_feet %}checked{% endif %}>
+                                        <label class="form-check-label" for="showSquareFeet">Show Square Feet</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left text-gray-600 table-fixed" id="edit-items-table">
+                                    <thead class="text-xs text-white uppercase bg-indigo-600">
+                                        <tr>
+                                            <th class="py-3 px-4" style="width: 5%;">S.No</th>
+                                            <th class="py-3 px-4" style="width: 15%;">Item Name</th>
+                                            <th class="py-3 px-4" style="width: 20%;">Description</th>
+                                            <th class="py-3 px-4" style="width: 8%;">UOM</th>
+                                            <th class="py-3 px-4" style="width: 8%;">Quantity</th>
+                                            <th class="py-3 px-4 weight-column {% if not dc.show_weight %}hidden{% endif %}" style="width: 8%;">Weight/Unit</th>
+                                            <th class="py-3 px-4 weight-column {% if not dc.show_weight %}hidden{% endif %}" style="width: 8%;">Total Weight</th>
+                                            <th class="py-3 px-4 square-feet-column {% if not dc.show_square_feet %}hidden{% endif %}" style="width: 8%;">Square Feet/Unit</th>
+                                            <th class="py-3 px-4 square-feet-column {% if not dc.show_square_feet %}hidden{% endif %}" style="width: 8%;">Total Square Feet</th>
+                                            <th class="py-3 px-4" style="width: 8%;">Rate (₹)</th>
+                                            <th class="py-3 px-4" style="width: 10%;">Project Name</th>
+                                            <th class="py-3 px-4" style="width: 10%;">Project Incharge</th>
+                                            <th class="py-3 px-4" style="width: 10%;">Remarks</th>
+                                            <th class="py-3 px-4" style="width: 5%;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <button type="button" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200" id="add-item">Add Item</button>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Notes</label>
+                            <textarea name="notes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" rows="5">{{ dc.notes|default:'' }}</textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-t-0 p-6 bg-gray-50 flex justify-end gap-4">
+                    <button type="button" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition duration-200" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200" onclick="saveDraftChanges('{{ dc.draft_id|escapejs }}')">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+<style>
+    .section-content {
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    .section-content.hidden {
+        max-height: 0;
+        opacity: 0;
+    }
+    .section-content:not(.hidden) {
+        max-height: 1000px;
+        opacity: 1;
+    }
+    .modal-content {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    .modal-header {
+        border-bottom: none;
+    }
+    .modal-footer {
+        border-top: none;
+    }
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .ui-menu-item {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+    }
+    .ui-menu-item:hover {
+        background: #e0e7ff;
+    }
+    #edit-items-table {
+        table-layout: fixed;
+        width: 200%;
+    }
+    #edit-items-table th,
+    #edit-items-table td {
+        min-width: 150px;
+    }
+    #edit-items-table input,
+    #edit-items-table select {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.875rem;
+        padding: 0.5rem;
+    }
+    #edit-items-table input[name="items[].rate_per_each"],
+    #edit-items-table input[name="items[].weight_per_unit"],
+    #edit-items-table input[name="items[].weight"],
+    #edit-items-table input[name="items[].square_feet_per_unit"],
+    #edit-items-table input[name="items[].square_feet"] {
+        text-align: right;
+    }
+    .weight-column, .square-feet-column { display: table-cell; }
+    .weight-column.hidden, .square-feet-column.hidden { display: none; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'js/state.js' %}"></script>
+
+<script>
+// Get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Toggle section visibility
+function toggleSection(sectionId) {
+    const content = document.getElementById(sectionId);
+    const icon = document.getElementById(sectionId.replace('content', 'icon'));
+    content.classList.toggle('hidden');
+    icon.classList.toggle('fa-minus', !content.classList.contains('hidden'));
+    icon.classList.toggle('fa-plus', content.classList.contains('hidden'));
+}
+
+// Navigate back to dashboard
+function goBack() {
+    window.location.href = '/dashboard/';
+}
+
+// Toggle column visibility
+function toggleColumns() {
+    const showWeight = $("#showWeight").is(":checked");
+    const showSquareFeet = $("#showSquareFeet").is(":checked");
+    
+    $(".weight-column").toggleClass("hidden", !showWeight);
+    $(".square-feet-column").toggleClass("hidden", !showSquareFeet);
+}
+
+// Calculate total weight
+function calculateTotalWeight(row) {
+    const quantity = parseFloat(row.find('input[name="items[].quantity"]').val()) || 0;
+    const weightPerUnit = parseFloat(row.find('input[name="items[].weight_per_unit"]').val()) || 0;
+    const totalWeight = (quantity * weightPerUnit).toFixed(2);
+    row.find('input[name="items[].weight"]').val(totalWeight);
+}
+
+// Calculate total square feet
+function calculateTotalSquareFeet(row) {
+    const quantity = parseFloat(row.find('input[name="items[].quantity"]').val()) || 0;
+    const squareFeetPerUnit = parseFloat(row.find('input[name="items[].square_feet_per_unit"]').val()) || 0;
+    const totalSquareFeet = (quantity * squareFeetPerUnit).toFixed(2);
+    row.find('input[name="items[].square_feet"]').val(totalSquareFeet);
+}
+
+// Populate states and cities
+function populateStatesAndCities() {
+    const stateSelect = $("#buyerState");
+    const citySelect = $("#buyerCity");
+    const stateCodeInput = $("#buyerStateCode");
+
+    stateSelect.empty().append('<option value="">Select State</option>');
+    statesData.forEach(state => {
+        stateSelect.append(`<option value="${state.name}" data-gstCode="${state.gstCode}">${state.name}</option>`);
+    });
+
+    stateSelect.on('change', function() {
+        const stateName = $(this).val();
+        citySelect.empty().append('<option value="">Select City</option>');
+        stateCodeInput.val('');
+        if (stateName) {
+            const stateData = statesData.find(s => s.name === stateName);
+            if (stateData) {
+                stateCodeInput.val(stateData.gstCode);
+                stateData.districts.forEach(city => {
+                    citySelect.append(`<option value="${city}">${city}</option>`);
+                });
+            }
+        }
+    });
+
+    // Set initial values
+    const initialState = "{{ dc.buyerState|default:'' }}";
+    if (initialState) {
+        stateSelect.val(initialState).trigger('change');
+        setTimeout(() => {
+            citySelect.val("{{ dc.buyerCity|default:'' }}");
+        }, 100);
+    }
+}
+
+// Initialize supplier autocomplete
+function initializeSupplierAutocomplete() {
+    $(".supplier-autocomplete").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/autocomplete/supplier/",
+                dataType: "json",
+                data: { term: request.term },
+                success: function(data) {
+                    response(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Supplier autocomplete error:', status, error);
+                    response([]);
+                }
+            });
+        },
+        minLength: 1,
+        select: function(event, ui) {
+            const supplier = ui.item.data;
+            $("#editForm input[name='buyerAddress1']").val(supplier.address1 || '');
+            $("#editForm input[name='buyerAddress2']").val(supplier.address2 || '');
+            $("#editForm select[name='buyerState']").val(supplier.state || '').trigger('change');
+            setTimeout(() => {
+                $("#editForm select[name='buyerCity']").val(supplier.city || '');
+            }, 100);
+            $("#editForm input[name='buyerPincode']").val(supplier.pincode || '');
+            $("#editForm input[name='buyerGstin']").val(supplier.gstin || '');
+            $("#editForm input[name='buyerStateCode']").val(supplier.state_code || '');
+            $("#saveSupplierBtn").show();
+        }
+    }).on('focus', function() {
+        if ($(this).val().length > 0) {
+            $(this).autocomplete('search', $(this).val());
+        }
+    });
+}
+
+// Save new supplier
+function saveNewSupplier() {
+    const newSupplier = {
+        name: $("#editForm input[name='buyerName']").val().trim(),
+        address1: $("#editForm input[name='buyerAddress1']").val().trim(),
+        address2: $("#editForm input[name='buyerAddress2']").val().trim(),
+        state: $("#editForm select[name='buyerState']").val(),
+        city: $("#editForm select[name='buyerCity']").val(),
+        pincode: $("#editForm input[name='buyerPincode']").val().trim(),
+        gstin: $("#editForm input[name='buyerGstin']").val().trim(),
+        state_code: $("#editForm input[name='buyerStateCode']").val().trim()
+    };
+
+    if (!newSupplier.name || !newSupplier.address1 || !newSupplier.state || !newSupplier.city || !newSupplier.pincode || !newSupplier.state_code) {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Please fill all required fields."
+        });
+        return;
+    }
+
+    if (!/^\d{6}$/.test(newSupplier.pincode)) {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Invalid pincode format. Must be 6 digits."
+        });
+        return;
+    }
+
+    if (newSupplier.gstin && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(newSupplier.gstin)) {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Invalid GSTIN format."
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "{% url 'add_supplier' %}",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(newSupplier),
+        headers: { "X-CSRFToken": getCookie('csrftoken') },
+        success: function(response) {
+            if (response.status === 'success') {
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    html: `${response.message}<br><small>Created by: ${response.created_by}<br>Date: ${response.created_date}</small>`
+                });
+                $("#saveSupplierBtn").hide();
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: response.message
+                });
+            }
+        },
+        error: function(xhr) {
+            let errorMessage = "Failed to add supplier. Please try again.";
+            try {
+                const errorResponse = JSON.parse(xhr.responseText);
+                if (errorResponse.message) {
+                    errorMessage = errorResponse.message;
+                }
+            } catch (e) {}
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: errorMessage
+            });
+        }
+    });
+}
+
+// Save delivery note with DC number generation
+function saveDeliveryNote(draftId) {
+    const data = {
+        draft_id: draftId,
+        dcNumber: "{{ dc.dcNo|escapejs }}",
+        dcType: "{{ dc.dcType|escapejs }}",
+        dcDate: "{{ dc.dcDate|date:'Y-m-d'|escapejs }}",
+        buyerName: "{{ dc.buyerName|escapejs }}",
+        buyerAddress1: "{{ dc.buyerAddress1|escapejs }}",
+        buyerAddress2: "{{ dc.buyerAddress2|escapejs }}",
+        buyerCity: "{{ dc.buyerCity|escapejs }}",
+        buyerState: "{{ dc.buyerState|escapejs }}",
+        buyerStateCode: "{{ dc.buyerStateCode|escapejs }}",
+        buyerPincode: "{{ dc.buyerPincode|escapejs }}",
+        buyerGstin: "{{ dc.buyerGstin|escapejs }}",
+        vehicleNo: "{{ dc.vehicleNo|escapejs }}",
+        process: "{{ dc.process|escapejs }}",
+        notes: "{{ dc.notes|escapejs }}",
+        showWeight: $("#showWeight").is(":checked"),
+        showSquareFeet: $("#showSquareFeet").is(":checked"),
+        items: [
+            {% for item in items %}
+            {
+                item_name: "{{ item.item_name|escapejs }}",
+                description: "{{ item.description|escapejs }}",
+                uom: "{{ item.uom|escapejs }}",
+                quantity: "{{ item.quantity|escapejs }}",
+                weight_per_unit: "{{ item.weight_per_unit|escapejs }}",
+                weight: "{{ item.weight|escapejs }}",
+                square_feet_per_unit: "{{ item.square_feet_per_unit|escapejs }}",
+                square_feet: "{{ item.square_feet|escapejs }}",
+                rate_per_each: "{{ item.rate_per_each|escapejs }}",
+                project_name: "{{ item.project_name|escapejs }}",
+                project_incharge: "{{ item.project_incharge|escapejs }}",
+                remarks: "{{ item.remarks|escapejs }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    };
+
+    Swal.fire({
+        title: 'Confirm Save',
+        text: 'Are you sure you want to finalize this delivery note?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Save',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (!data.dcNumber) {
+                const dcType = data.dcType;
+                if (!dcType) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'DC Type is missing'
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: '/get-next-dc-number/',
+                    method: 'GET',
+                    data: { dc_type: dcType },
+                    success: function(response) {
+                        if (response.dc_number) {
+                            data.dcNumber = response.dc_number;
+                            $('#editForm input[name="dcNo"]').val(response.dc_number);
+                            saveDeliveryNoteToDB(draftId, data);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || 'Failed to generate DC number'
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: xhr.responseJSON?.message || 'Failed to generate DC number'
+                        });
+                    }
+                });
+            } else {
+                saveDeliveryNoteToDB(draftId, data);
+            }
+        }
+    });
+}
+
+// Function to save delivery note to database
+function saveDeliveryNoteToDB(draftId, data) {
+    $.ajax({
+        url: '/save-delivery-note/',
+        method: 'POST',
+        contentType: 'application/json',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        data: JSON.stringify(data),
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Saved',
+                    text: 'Delivery note saved successfully!',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = '/dashboard/';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message
+                });
+            }
+        },
+        error: function(xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: xhr.responseJSON?.message || 'Failed to save delivery note'
+            });
+        }
+    });
+}
+
+// Save draft changes
+function saveDraftChanges(draftId) {
+    const formData = $('#editForm').serializeArray();
+    const requiredFields = ['buyerName', 'buyerAddress1', 'buyerCity', 'buyerState', 'buyerStateCode', 'buyerPincode', 'dcDate', 'process'];
+    for (const field of requiredFields) {
+        if (!formData.find(item => item.name === field)?.value) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: `Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()} field`
+            });
+            return;
+        }
+    }
+
+    const data = {
+        draft_id: draftId,
+        dcNo: formData.find(item => item.name === 'dcNo')?.value || '',
+        dcType: formData.find(item => item.name === 'dcType')?.value || '',
+        dcDate: formData.find(item => item.name === 'dcDate')?.value || '',
+        buyerName: formData.find(item => item.name === 'buyerName')?.value || '',
+        buyerAddress1: formData.find(item => item.name === 'buyerAddress1')?.value || '',
+        buyerAddress2: formData.find(item => item.name === 'buyerAddress2')?.value || '',
+        buyerCity: formData.find(item => item.name === 'buyerCity')?.value || '',
+        buyerState: formData.find(item => item.name === 'buyerState')?.value || '',
+        buyerStateCode: formData.find(item => item.name === 'buyerStateCode')?.value || '',
+        buyerPincode: formData.find(item => item.name === 'buyerPincode')?.value || '',
+        buyerGstin: formData.find(item => item.name === 'buyerGstin')?.value || '',
+        vehicleNo: formData.find(item => item.name === 'vehicleNo')?.value || '',
+        process: formData.find(item => item.name === 'process')?.value || '',
+        notes: formData.find(item => item.name === 'notes')?.value || '',
+        showWeight: $("#showWeight").is(":checked"),
+        showSquareFeet: $("#showSquareFeet").is(":checked"),
+        items: []
+    };
+
+    let hasValidItem = false;
+    $('#edit-items-table tbody tr').each(function() {
+        const item = {
+            item_name: $(this).find('input[name="items[].item_name"]').val() || '',
+            description: $(this).find('input[name="items[].description"]').val() || '',
+            uom: $(this).find('select[name="items[].uom"]').val() || '',
+            quantity: parseFloat($(this).find('input[name="items[].quantity"]').val()) || 0,
+            weight_per_unit: parseFloat($(this).find('input[name="items[].weight_per_unit"]').val()) || 0,
+            weight: parseFloat($(this).find('input[name="items[].weight"]').val()) || 0,
+            square_feet_per_unit: parseFloat($(this).find('input[name="items[].square_feet_per_unit"]').val()) || 0,
+            square_feet: parseFloat($(this).find('input[name="items[].square_feet"]').val()) || 0,
+            rate_per_each: parseFloat($(this).find('input[name="items[].rate_per_each"]').val()) || 0,
+            project_name: $(this).find('input[name="items[].project_name"]').val() || '',
+            project_incharge: $(this).find('input[name="items[].project_incharge"]').val() || '',
+            remarks: $(this).find('input[name="items[].remarks"]').val() || ''
+        };
+        if (item.item_name || item.description) {
+            data.items.push(item);
+            hasValidItem = true;
+        }
+    });
+
+    if (!hasValidItem) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'At least one item with a name or description is required'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: '/update-draft/',
+        method: 'POST',
+        contentType: 'application/json',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        data: JSON.stringify(data),
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Draft updated successfully!',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    $('#editModal').modal('hide');
+                    window.location.href = '/draft-list/';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message || 'Failed to update draft'
+                });
+            }
+        },
+        error: function(xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: xhr.responseJSON?.message || 'Failed to update draft'
+            });
+        }
+    });
+}
+
+$(document).ready(function() 
+{
+    // Initialize column visibility
+    toggleColumns();
+    $("#showWeight, #showSquareFeet").on("change", toggleColumns);
+
+    // Populate states and cities
+    populateStatesAndCities();
+
+    // Initialize supplier autocomplete
+    initializeSupplierAutocomplete();
+
+    // Fetch draft data when edit modal is shown
+    $('#editModal').on('show.bs.modal', function() {
+        $.ajax({
+            url: '/get-draft/' + '{{ dc.draft_id|escapejs }}' + '/',
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    const data = response.data;
+                    $('#editForm input[name="dcNo"]').val(data.dcNo || '');
+                    $('#editForm select[name="dcType"]').val(data.dcType || '');
+                    $('#editForm input[name="dcDate"]').val(data.dcDate || '');
+                    $('#editForm input[name="buyerName"]').val(data.buyerName || '');
+                    $('#editForm input[name="buyerAddress1"]').val(data.buyerAddress1 || '');
+                    $('#editForm input[name="buyerAddress2"]').val(data.buyerAddress2 || '');
+                    $('#editForm select[name="buyerState"]').val(data.buyerState || '').trigger('change');
+                    setTimeout(() => {
+                        $('#editForm select[name="buyerCity"]').val(data.buyerCity || '');
+                    }, 100);
+                    $('#editForm input[name="buyerPincode"]').val(data.buyerPincode || '');
+                    $('#editForm input[name="buyerGstin"]').val(data.buyerGstin || '');
+                    $('#editForm input[name="buyerStateCode"]').val(data.buyerStateCode || '');
+                    $('#editForm input[name="vehicleNo"]').val(data.vehicleNo || '');
+                    $('#editForm input[name="process"]').val(data.process || '');
+                    $('#editForm textarea[name="notes"]').val(data.notes || '');
+                    $('#showWeight').prop('checked', data.showWeight || false);
+                    $('#showSquareFeet').prop('checked', data.showSquareFeet || false);
+                    toggleColumns();
+
+                    $('#edit-items-table tbody').empty();
+                    (data.items || []).forEach((item, index) => {
+                        const row = `
+                            <tr class="border-b bg-gray-50 hover:bg-gray-100">
+                                <td class="py-3 px-4" style="width: 5%;">${index + 1}</td>
+                                <td class="py-3 px-4" style="width: 15%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg item-name-autocomplete focus:ring-2 focus:ring-indigo-500" name="items[].item_name" value="${item.item_name || ''}"></td>
+                                <td class="py-3 px-4" style="width: 20%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].description" value="${item.description || ''}"></td>
+                                <td class="py-3 px-4" style="width: 8%;">
+                                    <select class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].uom" required>
+                                        <option value="">UOM</option>
+                                        <option value="NOS" ${item.uom === 'NOS' ? 'selected' : ''}>NOS</option>
+                                        <option value="KG" ${item.uom === 'KG' ? 'selected' : ''}>KG</option>
+                                        <option value="METER" ${item.uom === 'METER' ? 'selected' : ''}>METER</option>
+                                        <option value="LITER" ${item.uom === 'LITER' ? 'selected' : ''}>LITER</option>
+                                        <option value="SET" ${item.uom === 'SET' ? 'selected' : ''}>SET</option>
+                                        <option value="PIECE" ${item.uom === 'PIECE' ? 'selected' : ''}>PIECE</option>
+                                    </select>
+                                </td>
+                                <td class="py-3 px-4" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 quantity" name="items[].quantity" value="${item.quantity || ''}"></td>
+                                <td class="py-3 px-4 weight-column ${!data.showWeight ? 'hidden' : ''}" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 weight-per-unit" name="items[].weight_per_unit" value="${item.weight_per_unit || ''}"></td>
+                                <td class="py-3 px-4 weight-column ${!data.showWeight ? 'hidden' : ''}" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].weight" value="${item.weight || ''}" readonly></td>
+                                <td class="py-3 px-4 square-feet-column ${!data.showSquareFeet ? 'hidden' : ''}" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 square-feet-per-unit" name="items[].square_feet_per_unit" value="${item.square_feet_per_unit || ''}"></td>
+                                <td class="py-3 px-4 square-feet-column ${!data.showSquareFeet ? 'hidden' : ''}" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].square_feet" value="${item.square_feet || ''}" readonly></td>
+                                <td class="py-3 px-4" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-right" name="items[].rate_per_each" value="${item.rate_per_each || ''}"></td>
+                                <td class="py-3 px-4" style="width: 10%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].project_name" value="${item.project_name || ''}"></td>
+                                <td class="py-3 px-4" style="width: 10%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].project_incharge" value="${item.project_incharge || ''}"></td>
+                                <td class="py-3 px-4" style="width: 10%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].remarks" value="${item.remarks || ''}"></td>
+                                <td class="py-3 px-4" style="width: 5%;"><button type="button" class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition duration-200 remove-item">Remove</button></td>
+                            </tr>
+                        `;
+                        $('#edit-items-table tbody').append(row);
+                        calculateTotalWeight($('#edit-items-table tbody tr').last());
+                        calculateTotalSquareFeet($('#edit-items-table tbody tr').last());
+                    });
+
+                    // Initialize autocomplete for existing items
+                    $('.item-name-autocomplete').autocomplete({
+                        source: function(request, response) {
+                            $.ajax({
+                                url: '/autocomplete/item/',
+                                data: { term: request.term },
+                                dataType: 'json',
+                                success: function(data) {
+                                    response(data.map(item => ({
+                                        label: item.item_name,
+                                        value: item.item_name,
+                                        description: item.description,
+                                        uom: item.uom,
+                                        rate: item.rate_per_each,
+                                        weight_per_unit: item.weight_per_unit,
+                                        square_feet_per_unit: item.square_feet_per_unit
+                                    })));
+                                }
+                            });
+                        },
+                        minLength: 2,
+                        select: function(event, ui) {
+                            const row = $(this).closest('tr');
+                            row.find('input[name="items[].description"]').val(ui.item.description || '');
+                            row.find('select[name="items[].uom"]').val(ui.item.uom || '');
+                            row.find('input[name="items[].rate_per_each"]').val(ui.item.rate ? parseFloat(ui.item.rate).toFixed(2) : '');
+                            row.find('input[name="items[].weight_per_unit"]').val(ui.item.weight_per_unit ? parseFloat(ui.item.weight_per_unit).toFixed(2) : '');
+                            row.find('input[name="items[].square_feet_per_unit"]').val(ui.item.square_feet_per_unit ? parseFloat(ui.item.square_feet_per_unit).toFixed(2) : '');
+                            calculateTotalWeight(row);
+                            calculateTotalSquareFeet(row);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'Failed to load draft data'
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON?.message || 'Failed to load draft data'
+                });
+            }
+        });
+    });
+
+    // Add new item row
+    $('#add-item').click(function() {
+        const rowCount = $('#edit-items-table tbody tr').length + 1;
+        const newRow = `
+            <tr class="border-b bg-gray-50 hover:bg-gray-100">
+                <td class="py-3 px-4" style="width: 5%;">${rowCount}</td>
+                <td class="py-3 px-4" style="width: 15%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg item-name-autocomplete focus:ring-2 focus:ring-indigo-500" name="items[].item_name"></td>
+                <td class="py-3 px-4" style="width: 20%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].description"></td>
+                <td class="py-3 px-4" style="width: 8%;">
+                    <select class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].uom" required>
+                        <option value="">UOM</option>
+                        <option value="NOS">NOS</option>
+                        <option value="KG">KG</option>
+                        <option value="METER">METER</option>
+                        <option value="LITER">LITER</option>
+                        <option value="SET">SET</option>
+                        <option value="PIECE">PIECE</option>
+                    </select>
+                </td>
+                <td class="py-3 px-4" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 quantity" name="items[].quantity"></td>
+                <td class="py-3 px-4 weight-column ${!$("#showWeight").is(":checked") ? 'hidden' : ''}" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 weight-per-unit" name="items[].weight_per_unit"></td>
+                <td class="py-3 px-4 weight-column ${!$("#showWeight").is(":checked") ? 'hidden' : ''}" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].weight" readonly></td>
+                <td class="py-3 px-4 square-feet-column ${!$("#showSquareFeet").is(":checked") ? 'hidden' : ''}" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 square-feet-per-unit" name="items[].square_feet_per_unit"></td>
+                <td class="py-3 px-4 square-feet-column ${!$("#showSquareFeet").is(":checked") ? 'hidden' : ''}" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].square_feet" readonly></td>
+                <td class="py-3 px-4" style="width: 8%;"><input type="number" min="0" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-right" name="items[].rate_per_each"></td>
+                <td class="py-3 px-4" style="width: 10%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].project_name"></td>
+                <td class="py-3 px-4" style="width: 10%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].project_incharge"></td>
+                <td class="py-3 px-4" style="width: 10%;"><input type="text" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" name="items[].remarks"></td>
+                <td class="py-3 px-4" style="width: 5%;"><button type="button" class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition duration-200 remove-item">Remove</button></td>
+            </tr>
+        `;
+        $('#edit-items-table tbody').append(newRow);
+
+        // Initialize autocomplete for new item
+        $('.item-name-autocomplete').last().autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: '/autocomplete/item/',
+                    data: { term: request.term },
+                    dataType: 'json',
+                    success: function(data) {
+                        response(data.map(item => ({
+                            label: item.item_name,
+                            value: item.item_name,
+                            description: item.description,
+                            uom: item.uom,
+                            rate: item.rate_per_each,
+                            weight_per_unit: item.weight_per_unit,
+                            square_feet_per_unit: item.square_feet_per_unit
+                        })));
+                    }
+                });
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                const row = $(this).closest('tr');
+                row.find('input[name="items[].description"]').val(ui.item.description || '');
+                row.find('select[name="items[].uom"]').val(ui.item.uom || '');
+                row.find('input[name="items[].rate_per_each"]').val(ui.item.rate ? parseFloat(ui.item.rate).toFixed(2) : '');
+                row.find('input[name="items[].weight_per_unit"]').val(ui.item.weight_per_unit ? parseFloat(ui.item.weight_per_unit).toFixed(2) : '');
+                row.find('input[name="items[].square_feet_per_unit"]').val(ui.item.square_feet_per_unit ? parseFloat(ui.item.square_feet_per_unit).toFixed(2) : '');
+                calculateTotalWeight(row);
+                calculateTotalSquareFeet(row);
+            }
+        });
+    });
+
+    // Remove item row
+    $(document).on('click', '.remove-item', function() {
+        if ($('#edit-items-table tbody tr').length > 1) {
+            $(this).closest('tr').remove();
+            $('#edit-items-table tbody tr').each(function(index) {
+                $(this).find('td:first').text(index + 1);
+            });
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning',
+                text: 'At least one item is required.'
+            });
+        }
+    });
+
+    // Handle quantity and per-unit calculations
+    $(document).on('input', '.quantity, .weight-per-unit, .square-feet-per-unit', function() {
+        const row = $(this).closest('tr');
+        calculateTotalWeight(row);
+        calculateTotalSquareFeet(row);
+    });
+});
+</script>
+{% endblock %}

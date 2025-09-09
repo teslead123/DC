@@ -1,0 +1,902 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings - Teslead Dashboard{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        --hover-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        --border-radius: 20px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 20px 0;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    .page-subtitle {
+        color: #6b7280;
+        font-size: 1.1rem;
+        font-weight: 400;
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .settings-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--border-radius);
+        padding: 0;
+        margin-bottom: 30px;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .settings-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary-gradient);
+        opacity: 0;
+        transition: var(--transition);
+    }
+
+    .settings-section:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--hover-shadow);
+    }
+
+    .settings-section:hover::before {
+        opacity: 1;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding: 25px 30px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .section-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .section-header:hover::before {
+        left: 100%;
+    }
+
+    .section-header:hover {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    }
+
+    .section-header h3 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-header i:last-child {
+        font-size: 1.2rem;
+        color: #667eea;
+        transition: var(--transition);
+    }
+
+    .section-content {
+        display: none;
+        padding: 30px;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .section-content.show {
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        width: 100%;
+        border-radius: 12px;
+        border: 2px solid #e5e7eb;
+        padding: 15px 20px;
+        font-size: 16px;
+        transition: var(--transition);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-control:disabled {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        color: #64748b;
+        cursor: not-allowed;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 12px;
+        padding: 14px 28px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: var(--transition);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+    }
+
+    .btn-success {
+        background: var(--success-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+    }
+
+    .btn-success:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+        cursor: pointer;
+        font-size: 18px;
+        transition: var(--transition);
+        z-index: 10;
+    }
+
+    .password-toggle:hover {
+        color: #667eea;
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .otp-section {
+        display: none;
+        padding: 25px;
+        background: linear-gradient(135deg, rgba(79, 172, 254, 0.05) 0%, rgba(0, 242, 254, 0.05) 100%);
+        border-radius: 15px;
+        margin-top: 20px;
+        border: 1px solid rgba(79, 172, 254, 0.1);
+    }
+
+    .otp-section.show {
+        display: block;
+        animation: slideIn 0.5s ease-out;
+    }
+
+    .password-fields-disabled {
+        pointer-events: none;
+        opacity: 0.5;
+        filter: blur(2px);
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .password-fields-disabled::before {
+        content: '🔒 Verify OTP first to unlock password fields';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(102, 126, 234, 0.9);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 10;
+        white-space: nowrap;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .password-fields-enabled {
+        opacity: 1;
+        filter: blur(0);
+        pointer-events: auto;
+        transition: var(--transition);
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .justify-content-between {
+        justify-content: space-between;
+    }
+
+    .position-relative {
+        position: relative;
+    }
+
+    .mb-3 {
+        margin-bottom: 20px;
+    }
+
+    .user-info-card {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .info-item {
+        padding: 20px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        border-radius: 12px;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        text-align: center;
+        transition: var(--transition);
+    }
+
+    .info-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.1);
+    }
+
+    .info-icon {
+        font-size: 2rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        color: #1f2937;
+        font-weight: 600;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            max-height: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            max-height: 1000px;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .section-icon {
+        font-size: 1.2rem;
+        margin-right: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .settings-section {
+            margin: 0 -10px 20px -10px;
+        }
+        
+        .section-header,
+        .section-content {
+            padding: 20px;
+        }
+        
+        .d-flex {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Settings</h1>
+    <p class="page-subtitle">Manage your account preferences and security settings</p>
+</div>
+
+<div class="settings-section">
+    <div class="section-header" onclick="toggleSection('user-info')">
+        <h3><i class="fas fa-user section-icon"></i>User Information</h3>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="section-content" id="user-info">
+        <div class="user-info-card">
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="info-label">Username</div>
+                <div class="info-value" id="username">Loading...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="info-label">Email</div>
+                <div class="info-value" id="email">Loading...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="info-label">Role</div>
+                <div class="info-value" id="role">Loading...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="info-label">Phone Number</div>
+                <div class="info-value" id="phone_number">Loading...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="settings-section">
+    <div class="section-header" onclick="toggleSection('edit-profile')">
+        <h3><i class="fas fa-edit section-icon"></i>Edit Profile</h3>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="section-content" id="edit-profile">
+        <div class="form-group">
+            <label for="edit-username"><i class="fas fa-user"></i> Username</label>
+            <input type="text" class="form-control" id="edit-username" placeholder="Enter your username">
+        </div>
+        <div class="form-group">
+            <label for="edit-email"><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" class="form-control" id="edit-email" placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+            <label for="edit-phone"><i class="fas fa-phone"></i> Phone Number</label>
+            <input type="text" class="form-control" id="edit-phone" placeholder="Enter your phone number">
+        </div>
+        <div class="form-group">
+            <label for="edit-role"><i class="fas fa-shield-alt"></i> Role</label>
+            <input type="text" class="form-control" id="edit-role" disabled>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-primary" onclick="updateProfile()">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="settings-section">
+    <div class="section-header" onclick="toggleSection('change-password')">
+        <h3><i class="fas fa-key section-icon"></i>Change Password</h3>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="section-content" id="change-password">
+        <div class="password-section">
+            <div class="form-group position-relative">
+                <label for="current-password"><i class="fas fa-lock"></i> Current Password</label>
+                <input type="password" class="form-control" id="current-password" placeholder="Enter your current password">
+                <i class="fas fa-eye password-toggle" onclick="togglePassword('current-password')"></i>
+            </div>
+            <div class="form-group position-relative">
+                <label for="new-password"><i class="fas fa-key"></i> New Password</label>
+                <input type="password" class="form-control" id="new-password" placeholder="Enter your new password">
+                <i class="fas fa-eye password-toggle" onclick="togglePassword('new-password')"></i>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-secondary" onclick="showOtpSection()">
+                    <i class="fas fa-mobile-alt"></i> Try Another Way
+                </button>
+                <button class="btn btn-primary" onclick="updatePassword()">
+                    <i class="fas fa-save"></i> Update Password
+                </button>
+            </div>
+        </div>
+        <div class="otp-section" id="otp-section">
+            <h4 style="margin-bottom: 20px; color: #1f2937; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-shield-alt"></i> Alternative Verification Method
+            </h4>
+            <div class="form-group">
+                <label for="email-otp"><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" class="form-control" id="email-otp" placeholder="Enter your email address" disabled>
+            </div>
+            <button class="btn btn-success mb-3" onclick="sendOtp()">
+                <i class="fas fa-paper-plane"></i> Send OTP
+            </button>
+            <div class="form-group">
+                <label for="otp"><i class="fas fa-fingerprint"></i> Verification Code</label>
+                <input type="text" class="form-control" id="otp" placeholder="Enter the 6-digit code">
+            </div>
+            <button class="btn btn-success mb-3" onclick="verifyOtp()">
+                <i class="fas fa-check-circle"></i> Verify Code
+            </button>
+            <div id="password-fields-container" class="password-fields-disabled">
+                <div class="form-group position-relative">
+                    <label for="otp-new-password"><i class="fas fa-key"></i> New Password</label>
+                    <input type="password" class="form-control" id="otp-new-password" placeholder="Enter your new password" disabled>
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('otp-new-password')"></i>
+                </div>
+                <div class="form-group position-relative">
+                    <label for="otp-confirm-password"><i class="fas fa-key"></i> Confirm Password</label>
+                    <input type="password" class="form-control" id="otp-confirm-password" placeholder="Confirm your new password" disabled>
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('otp-confirm-password')"></i>
+                </div>
+                <button class="btn btn-primary" onclick="updatePasswordOtp()" disabled>
+                    <i class="fas fa-save"></i> Update Password
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Get CSRF token function
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Fetch user info on page load
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/get-user-info/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Update user info card
+            document.getElementById('username').textContent = data.data.username;
+            document.getElementById('email').textContent = data.data.email;
+            document.getElementById('role').textContent = data.data.role;
+            document.getElementById('phone_number').textContent = data.data.phone_number || 'Not set';
+            // Populate edit profile fields
+            document.getElementById('edit-username').value = data.data.username;
+            document.getElementById('edit-email').value = data.data.email;
+            document.getElementById('edit-phone').value = data.data.phone_number || '';
+            document.getElementById('edit-role').value = data.data.role;
+            // Set email for OTP section
+            document.getElementById('email-otp').value = data.data.email;
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load user information.',
+                customClass: { confirmButton: 'btn-primary' }
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: 'Something went wrong: ' + error.message,
+            customClass: { confirmButton: 'btn-primary' }
+        });
+    });
+
+    // Add entrance animations to sections
+    const sections = document.querySelectorAll('.settings-section');
+    sections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+            section.style.transition = 'all 0.6s ease-out';
+        }, index * 200);
+    });
+});
+
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    const icon = section.previousElementSibling.querySelector('i:last-child');
+    section.classList.toggle('show');
+    icon.classList.toggle('fa-chevron-down');
+    icon.classList.toggle('fa-chevron-up');
+    
+    if (section.classList.contains('show')) {
+        icon.style.transform = 'rotate(180deg)';
+    } else {
+        icon.style.transform = 'rotate(0deg)';
+    }
+}
+
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling;
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+function showOtpSection() {
+    const otpSection = document.getElementById('otp-section');
+    const passwordSection = document.querySelector('.password-section');
+    const passwordContainer = document.getElementById('password-fields-container');
+    
+    passwordContainer.classList.add('password-fields-disabled');
+    passwordContainer.classList.remove('password-fields-enabled');
+    
+    const passwordInputs = passwordContainer.querySelectorAll('input');
+    const updateButton = passwordContainer.querySelector('button');
+    
+    passwordInputs.forEach(input => {
+        input.disabled = true;
+        input.value = '';
+    });
+    updateButton.disabled = true;
+    
+    document.getElementById('otp').value = '';
+    
+    otpSection.classList.add('show');
+    passwordSection.style.display = 'none';
+}
+
+function sendOtp() {
+    const email = document.getElementById('email-otp').value;
+    if (!email) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing Email',
+            text: 'Email address is required.',
+            customClass: { confirmButton: 'btn-primary' }
+        });
+        return;
+    }
+    
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    button.disabled = true;
+    
+    fetch('/api/send-otp/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+        if (data.status === 'success') {
+            Swal.fire({
+                title: 'OTP Sent Successfully!',
+                text: data.message,
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message,
+                customClass: { confirmButton: 'btn-primary' }
+            });
+        }
+    })
+    .catch(error => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+        Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: 'Something went wrong: ' + error.message,
+            customClass: { confirmButton: 'btn-primary' }
+        });
+    });
+}
+
+function verifyOtp() {
+    const otp = document.getElementById('otp').value;
+    if (!otp) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing OTP',
+            text: 'Please enter the verification code.',
+            customClass: { confirmButton: 'btn-primary' }
+        });
+        return;
+    }
+    
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+    button.disabled = true;
+    
+    fetch('/api/change-password-otp/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ otp, new_password: '' }) // Send empty password for verification
+    })
+    .then(response => response.json())
+    .then(data => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+        if (data.status === 'success') {
+            const passwordContainer = document.getElementById('password-fields-container');
+            const passwordInputs = passwordContainer.querySelectorAll('input');
+            const updateButton = passwordContainer.querySelector('button');
+            
+            passwordContainer.classList.remove('password-fields-disabled');
+            passwordContainer.classList.add('password-fields-enabled');
+            
+            passwordInputs.forEach(input => { input.disabled = false; });
+            updateButton.disabled = false;
+            
+            Swal.fire({
+                title: 'Verification Successful!',
+                text: 'You can now set a new password.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message,
+                customClass: { confirmButton: 'btn-primary' }
+            });
+        }
+    })
+    .catch(error => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+        Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: 'Something went wrong: ' + error.message,
+            customClass: { confirmButton: 'btn-primary' }
+        });
+    });
+}
+
+function updatePasswordOtp() {
+    const newPassword = document.getElementById('otp-new-password').value;
+    const otp = document.getElementById('otp').value;
+    
+    if (!newPassword) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing Information',
+            text: 'Please enter a new password.',
+            customClass: { confirmButton: 'btn-primary' }
+        });
+        return;
+    }
+    
+    Swal.fire({
+        title: 'Confirm Password Update',
+        text: 'Are you sure you want to update your password?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#667eea',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: '<i class="fas fa-check"></i> Yes, Update',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Updating Password...',
+                text: 'Please wait while we update your password.',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            fetch('/api/change-password-otp/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    new_password: newPassword,
+                    otp
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Your password has been updated successfully.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    document.getElementById('otp-new-password').value = '';
+                    document.getElementById('otp-section').classList.remove('show');
+                    document.querySelector('.password-section').style.display = 'block';
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Update Failed',
+                        text: data.message,
+                        customClass: { confirmButton: 'btn-primary' }
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: 'Something went wrong: ' + error.message,
+                    customClass: { confirmButton: 'btn-primary' }
+                });
+            });
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+DELIVERY CHALLAN
+
+dc_description table schema
+
+id
+dc_number
+item_
+
+
+   <table class="custom-table" border="1" cellpadding="8" cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="logo-cell" rowspan="4">
+        <img src="{% static 'images/image.png' %}" alt="Spanning Image" width="100">
+      </td>
+      <td colspan="100" class="company-name">   </td>
+    </tr>
+    <tr class="head">
+      <td colspan="100">  </td>
+    </tr>
+    <tr class="subhead">
+      <td colspan="50">  </td>
+    </tr>

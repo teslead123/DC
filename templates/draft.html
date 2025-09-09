@@ -1,0 +1,1486 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}< DRAFT DELIVERY CHALLAN{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <button id="continueBtn" class="btn btn-warning mb-3" style="display: none;">Continue with Last Draft</button>
+    <form id="deliveryNoteForm" onsubmit="event.preventDefault(); saveDraft();">
+        {% csrf_token %}
+        <!-- Supplier Information Section -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <i class="fas fa-user section-icon"></i> Supplier Information
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="buyerName">Supplier Name <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="buyerName" name="buyerName" value="{{ dc.buyerName|default:'' }}" placeholder="Select or type supplier name" required>
+                </div>
+                <div class="form-group">
+                    <label for="buyerAddress1">Address Line 1 <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="buyerAddress1" name="buyerAddress1" value="{{ dc.buyerAddress1|default:'' }}" required placeholder="Address 1">
+                </div>
+                <div class="form-group">
+                    <label for="buyerAddress2">Address Line 2</label>
+                    <input type="text" class="form-control" id="buyerAddress2" name="buyerAddress2" value="{{ dc.buyerAddress2|default:'' }}" placeholder="Address 2">
+                </div>
+                <div class="form-group">
+                    <label for="buyerState">State <span class="required">*</span></label>
+                    <select class="form-control" id="buyerState" name="buyerState" required>
+                        <option value="">Select State</option>
+                        <!-- Populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="buyerCity">City <span class="required">*</span></label>
+                    <select class="form-control" id="buyerCity" name="buyerCity" required>
+                        <option value="">Select City</option>
+                        <!-- Populated based on state -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="buyerPincode">Pincode <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="buyerPincode" name="buyerPincode" value="{{ dc.buyerPincode|default:'' }}" required placeholder="Pincode" pattern="\d{6}" title="Enter a 6-digit pincode">
+                </div>
+                <div class="form-group">
+                    <label for="buyerGstin">GSTIN</label>
+                    <input type="text" class="form-control" id="buyerGstin" name="buyerGstin" value="{{ dc.buyerGstin|default:'' }}" placeholder="GSTIN" pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}" title="Enter a valid 15-character GSTIN">
+                </div>
+                <div class="form-group">
+                    <label for="buyerStateCode">State Code <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="buyerStateCode" name="buyerStateCode" value="{{ dc.buyerStateCode|default:'' }}" required placeholder="Code" readonly>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-sm btn-primary" id="saveSupplierBtn" style="margin-top: 30px;">
+                        <i class="fas fa-save"></i> Save Supplier
+                    </button>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-sm btn-primary" id="updateSupplierBtn" style="margin-top: 30px;">
+                        <i class="fas fa-save"></i> Update Supplier
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DC Details Section -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <i class="fas fa-file-alt section-icon"></i> DC Details
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="dcType">DC Type <span class="required">*</span></label>
+                    <select class="form-control" id="dcType" name="dcType" required>
+                        <option value="">Select DC Type</option>
+                        <option value="SPM" {% if dc.dcType == 'SPM' %}selected{% endif %}>SPM</option>
+                        <option value="VALVE_SECTION" {% if dc.dcType == 'VALVE_SECTION' %}selected{% endif %}>Valve Section</option>
+                        <option value="QA" {% if dc.dcType == 'QA' %}selected{% endif %}>QA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dcDate">DC Date <span class="required">*</span></label>
+                    <input type="date" class="form-control" id="dcDate" name="dcDate"
+                           value="{{ dc.dcDate|date:'Y-m-d'|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="process">Process <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="process" name="process" value="{{ dc.process|default:'' }}" required placeholder="Process">
+                </div>
+                <div class="form-group">
+                    <label for="vehicleNo">Vehicle No</label>
+                    <input type="text" class="form-control" id="vehicleNo" name="vehicleNo" value="{{ dc.vehicleNo|default:'' }}" placeholder="Vehicle text">
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Section -->
+<div class="form-section items-section">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="section-title">
+      <i class="fas fa-box section-icon"></i> Items Details
+    </h2>
+    <div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="showWeight" checked>
+        <label class="form-check-label" for="showWeight">Enable Weight</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="showSquareFeet" checked>
+        <label class="form-check-label" for="showSquareFeet">Enable Square Feet</label>
+      </div>
+    </div>
+  </div>
+
+    <div class="table-responsive">
+    <table class="table items-table" id="itemsTable" style="width:100%; text-align:center; vertical-align:middle;">
+        <tbody id="itemsTableBody">
+         {% if dc.items %}
+          {% for item in dc.items %}
+          <!-- <tbody class="item-block"> -->
+            <!-- Row 1 -->
+            <tr>
+            <th  style="width:5%;">S.No</th>
+            <th colspan="2" style="width:30%;">Item Name</th>
+            <th colspan="2" style="width:25%;">Item Description</th>
+            <th colspan="2" style="width:18%;">Project Name</th>
+            <th colspan="2" style="width:18%;">Project Incharge</th>
+            </tr>
+
+            <tr>
+             <td rowspan="5">
+                {{ forloop.counter }}
+            </td> 
+            <td colspan="2">
+                <input type="text" class="form-control item-name" name="item_name[]" value="{{ item.item_name }}" placeholder="Item Name">
+            </td>
+            <td colspan="2">
+                <input type="text" class="form-control" name="description[]" value="{{ item.description }}" placeholder="Description">
+            </td>
+            <td colspan="2">
+                <input type="text" class="form-control" name="project_name[]" value="{{ item.project_name }}" placeholder="Project">
+            </td>
+            <td colspan="2">
+                <input type="text" class="form-control" name="project_incharge[]" value="{{ item.project_incharge }}" placeholder="Incharge name">
+            </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr>
+            <th style="width:8%;">Quantity</th>
+            <th style="width:8%;">UOM</th>
+            <th style="width:10%;" class="weight-column">Weight/Unit</th>
+            <th style="width:10%;" class="weight-column">Total Wt</th>
+            <th style="width:10%;" class="square-feet-column">SqFt/Unit</th>
+            <th style="width:10%;" class="square-feet-column">Total SqFt</th>
+            <th style="width:10%;">Rate</th>
+            </tr>
+            <tr>
+            <td><input type="number" class="form-control quantity" name="quantity[]" value="{{ item.quantity }}" placeholder="0.00" step="0.01"></td>
+            <td>
+                <select class="form-control" name="uom[]">
+                <!-- <option value="">UOM</option> -->
+                  <option value="NOS" {% if item.uom == 'NOS' %}selected{% endif %}>NOS</option>
+                  <option value="KG" {% if item.uom == 'KG' %}selected{% endif %}>KG</option>
+                  <option value="METER" {% if item.uom == 'METER' %}selected{% endif %}>METER</option>
+                  <option value="LITER" {% if item.uom == 'LITER' %}selected{% endif %}>LITER</option>
+                  <option value="SET" {% if item.uom == 'SET' %}selected{% endif %}>SET</option>
+                  <option value="PIECE" {% if item.uom == 'PIECE' %}selected{% endif %}>PIECE</option>
+                </select>
+            </td>
+            <td class="weight-column"><input type="number" class="form-control weight-per-unit" name="weight_per_unit[]"  value="{{ item.weight_per_unit|default:'0.00' }}" placeholder="0.00" step="0.01"></td>
+            <td class="weight-column"><input type="number" class="form-control total-weight" name="total_weight[]"  value="{{ item.weight|default:'0.00' }}" placeholder="0.00" step="0.01" readonly></td>
+            <td class="square-feet-column"><input type="number" class="form-control square-feet-per-unit" value="{{ item.square_feet_per_unit|default:'0.00' }}" name="square_feet_per_unit[]" placeholder="0.00" step="0.01"></td>
+            <td class="square-feet-column"><input type="number" class="form-control total-square-feet" name="total_square_feet[]" value="{{ item.square_feet|default:'0.00' }}" placeholder="0.00" step="0.01" readonly></td>
+            <td><input type="number" class="form-control" name="rate[]" value="{{ item.rate|default:'0.00' }}" placeholder="0.00" step="0.01"></td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr>
+            <th colspan="3" style="width:40%;">Remarks</th>
+            <th colspan="3" style="width:30%;">Action</th>
+            </tr>
+            <tr>
+            <td colspan="3"><input type="text" class="form-control" name="remarks[]" value="{{ item.remarks }}" placeholder="Remarks"></td>
+            <td colspan="3">
+                <button type="button" class="btn btn-danger btn-sm remove-item-btn" onclick="removeItemBlock(this)">Delete</button>
+            </td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    {% else %}
+        <!-- No items yet: JS will create a default empty block -->
+    {% endif %}
+    </table>
+    <!-- </tbody> -->
+    </div>
+  <button type="button" class="btn btn-success add-item-btn" onclick="addItem()">+ Add Item</button>
+</div>
+
+
+        <!-- Notes Section -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <i class="fas fa-sticky-note section-icon"></i> Additional Information
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <input type="text" class="form-control" id="notes" name="notes" value="{{ dc.notes|default:'' }}" placeholder="Notes or instructions">
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p>Processing...</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <!-- <button type="submit" class="btn btn-primary">Save</button> -->
+            <button type="submit" class="btn btn-primary">Draft</button>
+            <button type="button" class="btn btn-danger" onclick="clearForm()">Clear</button>
+            <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="{% static 'css/draft.css' %}">
+<style>
+    .weight-column, .square-feet-column { display: table-cell; }
+    .weight-column.hidden, .square-feet-column.hidden { display: none; }
+
+    /* Hide number input spinners in Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Hide number input spinners in Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+
+
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'js/state.js' %}"></script>
+<script>
+    // Fallback for jQuery and jQuery UI
+    if (typeof jQuery === 'undefined') {
+        console.error('jQuery not loaded, attempting to load local fallback');
+        document.write('<script src="{% static "js/jquery-3.6.0.min.js" %}"><\/script>');
+    }
+    if (typeof jQuery.ui === 'undefined') {
+        console.error('jQuery UI not loaded, attempting to load local fallback');
+        document.write('<script src="{% static "js/jquery-ui.min.js" %}"><\/script>');
+    }
+
+    function toggleColumns() {
+    const showWeight = $("#showWeight").is(":checked");
+    const showSquareFeet = $("#showSquareFeet").is(":checked");
+
+    // Weight column inputs
+    $(".weight-column input").prop("disabled", !showWeight)
+                             .toggleClass("bg-gray-200 text-gray-500", !showWeight) // disabled style
+                             .toggleClass("bg-white text-black", showWeight);       // enabled style
+
+    // Square Feet column inputs
+    $(".square-feet-column input").prop("disabled", !showSquareFeet)
+                                  .toggleClass("bg-gray-200 text-gray-500", !showSquareFeet)
+                                  .toggleClass("bg-white text-black", showSquareFeet);
+
+    // Save state
+    localStorage.setItem("dcform_showWeight", showWeight);
+    localStorage.setItem("dcform_showSquareFeet", showSquareFeet);
+}
+
+
+    // // Calculate total weight
+    // function calculateTotalWeight(row) {
+    //     const quantity = parseFloat(row.querySelector(".quantity").value) || 0;
+    //     const weightPerUnit = parseFloat(row.querySelector(".weight-per-unit").value) || 0;
+    //     const totalWeight = (quantity * weightPerUnit).toFixed(2);
+    //     row.querySelector(".total-weight").value = totalWeight;
+    // }
+
+    // ✅ Calculate total weight for a row
+function calculateTotalWeight(row) {
+    const qtyInput = row.querySelector(".quantity");
+    const wpuInput = row.querySelector(".weight-per-unit");
+    const totalInput = row.querySelector(".total-weight");
+
+    const quantity = parseFloat(qtyInput?.value) || 0;
+    const weightPerUnit = parseFloat(wpuInput?.value) || 0;
+
+    const totalWeight = (quantity * weightPerUnit).toFixed(2);
+
+    if (totalInput) {
+        totalInput.value = totalWeight;
+    }
+}
+
+
+    // Calculate total square feet
+    function calculateTotalSquareFeet(row) {
+        const quantity = parseFloat(row.querySelector(".quantity").value) || 0;
+        const squareFeetPerUnit = parseFloat(row.querySelector(".square-feet-per-unit").value) || 0;
+        const totalSquareFeet = (quantity * squareFeetPerUnit).toFixed(2);
+        row.querySelector(".total-square-feet").value = totalSquareFeet;
+    }
+
+    // Initialize column visibility from local storage
+    function initColumnVisibility() {
+        const showWeight = localStorage.getItem("dcform_showWeight") !== "false";
+        const showSquareFeet = localStorage.getItem("dcform_showSquareFeet") !== "false";
+        $("#showWeight").prop("checked", showWeight);
+        $("#showSquareFeet").prop("checked", showSquareFeet);
+        toggleColumns();
+    }
+
+    // Populate states and cities for main form
+    function populateMainFormStates() {
+        const stateSelect = $("#buyerState");
+        const citySelect = $("#buyerCity");
+        const stateCodeInput = $("#buyerStateCode");
+
+        stateSelect.empty().append('<option value="">Select State</option>');
+        statesData.forEach(state => {
+            stateSelect.append(`<option value="${state.name}" data-gstCode="${state.gstCode}">${state.name}</option>`);
+        });
+
+        stateSelect.on('change', function() {
+            const stateName = $(this).val();
+            citySelect.empty().append('<option value="">Select City</option>');
+            stateCodeInput.val('');
+            if (stateName) {
+                const stateData = statesData.find(s => s.name === stateName);
+                if (stateData) {
+                    stateCodeInput.val(stateData.gstCode);
+                    stateData.districts.forEach(city => {
+                        citySelect.append(`<option value="${city}">${city}</option>`);
+                    });
+                }
+            }
+        });
+    }
+
+   // Initialize autocomplete for supplier
+function initializeSupplierAutocomplete() {
+    console.log('Initializing supplier autocomplete for #buyerName');
+
+    $("#buyerName").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/autocomplete/supplier/",
+                dataType: "json",
+                data: { term: request.term },
+                success: function(data) {
+                    console.log('Supplier autocomplete data:', data);
+                    response(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Supplier autocomplete error:', status, error);
+                    response([]);
+                }
+            });
+        },
+        minLength: 1,
+        select: function(event, ui) {
+            console.log('Supplier selected:', ui.item.data);
+            const supplier = ui.item.data;
+
+            // Set current supplier and populate fields
+            currentSupplier = supplier;
+            $("#buyerAddress1").val(supplier.address1 || '');
+            $("#buyerAddress2").val(supplier.address2 || '');
+            $("#buyerState").val(supplier.state || '');
+            $("#buyerCity").empty().append('<option value="">Select City</option>');
+
+            const stateData = statesData.find(s => s.name === supplier.state);
+            if (stateData) {
+                stateData.districts.forEach(city => {
+                    $("#buyerCity").append(`<option value="${city}" ${city === supplier.city ? 'selected' : ''}>${city}</option>`);
+                });
+                $("#buyerStateCode").val(stateData.gstCode || '');
+            }
+
+            $("#buyerPincode").val(supplier.pincode || '');
+            $("#buyerGstin").val(supplier.gstin || '');
+            $("#buyerStateCode").val(supplier.state_code || '');
+
+            checkForChanges(); // show/hide save/update buttons
+        }
+    }).on('focus', function() {
+        if ($(this).val().length > 0) {
+            $(this).autocomplete('search', $(this).val());
+        }
+    });
+
+    // 🔹 Handle manual typing (blur or change) for full name
+    $("#buyerName").on("blur change", function() {
+        const typedName = $(this).val().trim();
+        if (typedName) {
+            checkSupplier(typedName); // fetch supplier from DB if typed manually
+        } else {
+            currentSupplier = null;
+            $("#buyerAddress1, #buyerAddress2, #buyerState, #buyerCity, #buyerPincode, #buyerGstin, #buyerStateCode").val("");
+            checkForChanges();
+        }
+    });
+}
+
+
+     // Save new supplier
+    function saveNewSupplier() {
+        const newSupplier = {
+            name: $("#buyerName").val().trim(),
+            address1: $("#buyerAddress1").val().trim(),
+            address2: $("#buyerAddress2").val().trim(),
+            state: $("#buyerState").val(),
+            city: $("#buyerCity").val(),
+            pincode: $("#buyerPincode").val().trim(),
+            gstin: $("#buyerGstin").val().trim(),
+            state_code: $("#buyerStateCode").val().trim()
+        };
+
+        console.log('Supplier data to be sent:', newSupplier);
+
+        if (!newSupplier.name || !newSupplier.address1 || !newSupplier.state || !newSupplier.city || !newSupplier.pincode || !newSupplier.state_code) {
+            console.log('Validation failed: Missing required fields');
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Please fill all required fields."
+            });
+            return;
+        }
+
+                
+        if (/^\d+$/.test(newSupplier.name.trim())) {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Supplier Name",
+                text: "Supplier name cannot contain only numbers."
+            });
+            return;
+        }
+
+        if (!/^\d{6}$/.test(newSupplier.pincode)) {
+            console.log('Validation failed: Invalid pincode format');
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Invalid pincode format. Must be 6 digits."
+            });
+            return;
+        }
+
+        if (newSupplier.gstin && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(newSupplier.gstin)) {
+            console.log('Validation failed: Invalid GSTIN format');
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Invalid GSTIN format."
+            });
+            return;
+        }
+
+        console.log('Client-side validation passed, sending AJAX request...');
+
+        $.ajax({
+            url: "{% url 'add_supplier' %}",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(newSupplier),
+            headers: {
+                "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() || "{{ csrf_token }}"
+            },
+            beforeSend: function(xhr, settings) {
+                // console.log('AJAX request details:');
+                // console.log('URL:', settings.url);
+                // console.log('Method:', settings.type);
+                // console.log('Data:', settings.data);
+            },
+            success: function(response) {
+                console.log('AJAX success response:', response);
+                if (response.status === 'success') {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Success",
+                        html: `${response.message}<br><small>Created by: ${response.created_by}<br>Date: ${response.created_date}</small>`
+                        
+                      
+                    }).then(() => {
+                        markSupplierAsSaved(); // ✅ update currentSupplier after alert is closed
+                    });
+
+                    $("#saveSupplierBtn").hide();
+                } else {
+                    console.log('Server returned error:', response.message);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error details:');
+                console.error('Status:', status);
+                console.error('Error:', error);
+                console.error('Response Text:', xhr.responseText);
+                console.error('Status Code:', xhr.status);
+
+                let errorMessage = "Failed to add supplier. Please try again.";
+                try {
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    if (errorResponse.message) {
+                        errorMessage = errorResponse.message;
+                    }
+                } catch (e) {
+                    console.error('Could not parse error response:', e);
+                }
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: errorMessage
+                });
+            }
+        });
+    }
+
+function markSupplierAsSaved() {
+    currentSupplier = {
+        name: $("#buyerName").val().trim(),
+        address1: $("#buyerAddress1").val().trim(),
+        address2: $("#buyerAddress2").val().trim(),
+        state: $("#buyerState").val(),
+        city: $("#buyerCity").val().trim(),
+        pincode: $("#buyerPincode").val().trim(),
+        gstin: $("#buyerGstin").val().trim(),
+        state_code: $("#buyerStateCode").val().trim()
+    };
+    $("#saveSupplierBtn, #updateSupplierBtn").hide(); // hide buttons immediately
+}
+
+
+
+let currentSupplier = null;  
+    // Update existing supplier
+function updateSupplier() {
+
+    if (!currentSupplier || !currentSupplier.id) {
+        console.error("No supplier selected to update!");
+        Swal.fire({ icon: "error", title: "Error", text: "No supplier selected to update." });
+        return;
+    }
+    const updatedSupplier = {
+        supplier_id: currentSupplier.id,  // make sure your check_supplier view returns `id`
+        name: $("#buyerName").val().trim(),   // keep name for identifying supplier
+        address1: $("#buyerAddress1").val().trim(),
+        address2: $("#buyerAddress2").val().trim(),
+        state: $("#buyerState").val(),
+        city: $("#buyerCity").val(),
+        pincode: $("#buyerPincode").val().trim(),
+        gstin: $("#buyerGstin").val().trim(),
+        state_code: $("#buyerStateCode").val().trim()
+    };
+
+    console.log("Updating supplier:", updatedSupplier);
+
+    $.ajax({
+        url: "{% url 'update_supplier' %}",  // new Django view for update
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(updatedSupplier),
+        headers: { "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() || "{{ csrf_token }}" },
+        success: function(response) {
+            if (response.status === 'success') {
+                Swal.fire({ icon: "success", title: "Supplier Updated", text: response.message });
+                $("#updateSupplierBtn").hide();
+            } else {
+                Swal.fire({ icon: "error", title: "Error", text: response.message });
+            }
+        },
+        error: function(xhr) {
+             console.error("Update error:", xhr.responseText);
+            Swal.fire({
+                icon: "error",
+                title: "Update Failed",
+                text: "Could not update supplier."
+            });
+        }
+    });
+}
+
+
+
+function checkForChanges() {
+    const typedName = $("#buyerName").val().trim();
+    const $saveBtn = $("#saveSupplierBtn");
+    const $updateBtn = $("#updateSupplierBtn");
+
+    if (!typedName) {
+        $saveBtn.hide();
+        $updateBtn.hide();
+        return;
+    }
+
+    if (currentSupplier && typedName === currentSupplier.name) {
+        let isEdited = false;
+        if ($("#buyerAddress1").val().trim() !== (currentSupplier.address1 || "")) isEdited = true;
+        if ($("#buyerAddress2").val().trim() !== (currentSupplier.address2 || "")) isEdited = true;
+        if ($("#buyerState").val() !== (currentSupplier.state || "")) isEdited = true;
+        if ($("#buyerCity").val() !== (currentSupplier.city || "")) isEdited = true;
+        if ($("#buyerPincode").val().trim() !== (currentSupplier.pincode || "")) isEdited = true;
+        if ($("#buyerGstin").val().trim() !== (currentSupplier.gstin || "")) isEdited = true;
+        if ($("#buyerStateCode").val().trim() !== (currentSupplier.state_code || "")) isEdited = true;
+
+        if (isEdited) {
+            $updateBtn.show();
+            $saveBtn.hide();
+        } else {
+            $updateBtn.hide();
+            $saveBtn.hide();
+        }
+    } else {
+        $saveBtn.show();
+        $updateBtn.hide();
+    }
+}
+
+function checkSupplier(name) {
+    if (!name) {
+        currentSupplier = null;
+        $("#buyerAddress1, #buyerAddress2, #buyerState, #buyerCity, #buyerPincode, #buyerGstin, #buyerStateCode").val("");
+        checkForChanges();
+        return;
+    }
+
+    $.ajax({
+        url: "{% url 'check_supplier' %}",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ name: name }),
+        headers: { "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() || "{{ csrf_token }}" },
+        success: function(response) {
+            if (response.exists && response.supplier) {
+                currentSupplier = response.supplier;
+                $("#buyerAddress1").val(response.supplier.address1 || "");
+                $("#buyerAddress2").val(response.supplier.address2 || "");
+                $("#buyerState").val(response.supplier.state || "");
+                $("#buyerCity").empty().append('<option value="">Select City</option>');
+
+                // Populate city dropdown from statesData
+                const stateData = statesData.find(s => s.name === currentSupplier.state);
+                if (stateData) {
+                    stateData.districts.forEach(city => {
+                        $("#buyerCity").append(`<option value="${city}" ${city === currentSupplier.city ? 'selected' : ''}>${city}</option>`);
+                    });
+                    $("#buyerStateCode").val(stateData.gstCode || '');
+                }
+                $("#buyerPincode").val(response.supplier.pincode || "");
+                $("#buyerGstin").val(response.supplier.gstin || "");
+                $("#buyerStateCode").val(response.supplier.state_code || "");
+            } else {
+                currentSupplier = null;
+                $("#buyerAddress1, #buyerAddress2, #buyerState, #buyerCity, #buyerPincode, #buyerGstin, #buyerStateCode").val("");
+            }
+            checkForChanges();
+        },
+        error: function(xhr, status, error) {
+            console.error("Supplier check AJAX error:", status, error);
+        }
+    });
+}
+
+$(document).ready(function () {
+    const $buyerName = $("#buyerName");
+
+    $("#saveSupplierBtn").hide();
+    $("#updateSupplierBtn").hide();
+
+    // 🔹 Debounced typing lookup
+    let debounceTimer = null;
+    $buyerName.on("input", function () {
+        clearTimeout(debounceTimer);
+        const typedName = $(this).val().trim();
+        debounceTimer = setTimeout(() => checkSupplier(typedName), 300);
+    });
+
+    $buyerName.on("change", function () {
+        checkSupplier($(this).val().trim());
+    });
+
+    // $(".form-control").not("#process").on("input change", function () {
+    //     checkForChanges();
+    // });
+
+    restoreFormFromLocalStorage(); // ✅ now works fine
+});
+
+
+   function initializeItemAutocomplete(selector) {
+    console.log('Initializing item autocomplete for:', selector);
+    $(selector).each(function() {
+        $(this).autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "/autocomplete/item/",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function(data) {
+                        console.log('Item autocomplete data:', data);
+                        response(data);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Item autocomplete error:', status, error);
+                        console.error('Response:', xhr.responseText);
+                        response([]);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, ui) {
+                console.log('Item selected:', ui.item.data);
+                const item = ui.item.data;
+
+                // Get the block
+                const block = $(this).closest(".item-block");
+                const rows = block.find("tr");
+
+                // Row 2 → Item details
+                rows.eq(1).find('input[name="item_name[]"]').val(item.item_name || '');
+                // rows.eq(1).find('input[name="description[]"]').val(item.description || '');
+                // rows.eq(1).find('input[name="project_name[]"]').val(item.project_name || '');
+                // rows.eq(1).find('input[name="project_incharge[]"]').val(item.project_incharge || '');
+
+                // // Row 4 → Quantity, UOM, weight, sqft, rate
+                // rows.eq(3).find('input[name="quantity[]"]').val(item.quantity || 0);
+                // rows.eq(3).find('select[name="uom[]"]').val(item.uom || '');
+                // rows.eq(3).find('input[name="weight_per_unit[]"]').val(item.weight_per_unit || 0);
+                // rows.eq(3).find('input[name="total_weight[]"]').val(item.weight || 0);
+                // rows.eq(3).find('input[name="square_feet_per_unit[]"]').val(item.square_feet_per_unit || 0);
+                // rows.eq(3).find('input[name="total_square_feet[]"]').val(item.square_feet || 0);
+                // rows.eq(3).find('input[name="rate[]"]').val(item.rate_per_each || 0);
+
+                // // Row 6 → Remarks
+                // rows.eq(5).find('input[name="remarks[]"]').val(item.remarks || '');
+
+                // Recalculate totals
+                calculateTotalWeight(block);
+                calculateTotalSquareFeet(block);
+            },
+            open: function() {
+                console.log('Item autocomplete dropdown opened');
+            }
+        }).on('focus', function() {
+            if ($(this).val().length > 0) {
+                $(this).autocomplete('search', $(this).val());
+            }
+        });
+    });
+}
+
+   
+function extractItemsFromTable() {
+    const items = [];
+
+    document.querySelectorAll("#itemsTableBody .item-block").forEach(block => {
+        const rows = block.querySelectorAll("tr");
+
+        // Row 2 (Item details)
+        const itemName = rows[1].querySelector("input[name='item_name[]']")?.value || "";
+        const description = rows[1].querySelector("input[name='description[]']")?.value || "";
+        const projectName = rows[1].querySelector("input[name='project_name[]']")?.value || "";
+        const projectIncharge = rows[1].querySelector("input[name='project_incharge[]']")?.value || "";
+
+        // Row 4 (Quantity, UOM, etc.)
+        const quantity = rows[3].querySelector("input[name='quantity[]']")?.value || "0";
+        const uom = rows[3].querySelector("select[name='uom[]']")?.value || "";
+        const weightPerUnit = rows[3].querySelector("input[name='weight_per_unit[]']")?.value || "0";
+        const totalWeight = rows[3].querySelector("input[name='total_weight[]']")?.value || "0";
+        const sqftPerUnit = rows[3].querySelector("input[name='square_feet_per_unit[]']")?.value || "0";
+        const totalSqft = rows[3].querySelector("input[name='total_square_feet[]']")?.value || "0";
+        const rate = rows[3].querySelector("input[name='rate[]']")?.value || "0";
+
+        // Row 6 (Remarks)
+        const remarks = rows[5].querySelector("input[name='remarks[]']")?.value || "";
+
+        items.push({
+            item_name: itemName,
+            description: description,
+            project_name: projectName,
+            project_incharge: projectIncharge,
+            quantity: quantity,
+            uom: uom,
+            weight_per_unit: weightPerUnit,
+            weight: totalWeight,
+            square_feet_per_unit: sqftPerUnit,
+            square_feet: totalSqft,
+            rate_per_each: rate,
+            remarks: remarks
+        });
+    });
+
+    return items;
+}
+
+function validateItems(items) {
+    for (const [index, item] of items.entries()) {
+        // 1. Item Name required
+        if (!item.item_name || item.item_name.trim() === "") {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Input",
+                text: `Item name is required (Row ${index + 1}).`
+            });
+            return false;
+        }
+
+        // 2. Item name should not be only numbers
+        if (/^\d+$/.test(item.item_name.trim())) {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Input",
+                text: `Item name cannot contain only numbers (Row ${index + 1}).`
+            });
+            return false;
+        }
+
+        // 3. Project Name required
+        if (!item.project_name || item.project_name.trim() === "") {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Input",
+                text: `Project name is required (Row ${index + 1}).`
+            });
+            return false;
+        }
+
+        // 4. Description required
+        if (!item.description || item.description.trim() === "") {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Input",
+                text: `Description is required (Row ${index + 1}).`
+            });
+            return false;
+        }
+
+        // 5. Project Incharge required
+        if (!item.project_incharge || item.project_incharge.trim() === "") {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Input",
+                text: `Project Incharge is required (Row ${index + 1}).`
+            });
+            return false;
+        }
+
+        // 6. Quantity required and > 0
+        if (!item.quantity || Number(item.quantity) <= 0) {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Input",
+                text: `Quantity must be greater than 0 (Row ${index + 1}).`
+            });
+            return false;
+        }
+
+        // 7. Weight & square feet must not be negative
+        if (Number(item.weight_per_unit) < 0 || Number(item.total_weight) < 0 ||
+            Number(item.square_feet_per_unit) < 0 || Number(item.total_square_feet) < 0) {
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Input",
+                text: `Weight and Square Feet must be non-negative (Row ${index + 1}).`
+            });
+            return false;
+        }
+    }
+
+    return true; // All items are valid
+}
+
+
+
+
+    function goBack() {
+        window.location.href = '/dashboard/';
+    }
+
+    function saveDraft() {
+    const buyerNameInput = document.getElementById("buyerName");
+    const buyerName = buyerNameInput.value.trim();
+
+    // ✅ Validate supplier name
+    if (!buyerName) {
+        Swal.fire({
+            icon: "error",
+            title: "Missing Supplier",
+            text: "Please enter the supplier name before saving the draft."
+        }).then(() => {
+            buyerNameInput.focus(); // 👈 focus after user closes the alert
+        });
+        return;
+    }
+
+    const formData = {
+        dcDate: document.getElementById("dcDate").value,
+        dcType: document.getElementById("dcType").value,
+        process: document.getElementById("process").value,
+        vehicleNo: document.getElementById("vehicleNo").value,
+        buyerName: buyerName,
+        buyerAddress1: document.getElementById("buyerAddress1").value,
+        buyerAddress2: document.getElementById("buyerAddress2").value,
+        buyerState: document.getElementById("buyerState").value,
+        buyerCity: document.getElementById("buyerCity").value,
+        buyerPincode: document.getElementById("buyerPincode").value,
+        buyerGstin: document.getElementById("buyerGstin").value,
+        buyerStateCode: document.getElementById("buyerStateCode").value,
+        notes: document.getElementById("notes").value,
+        items: extractItemsFromTable()
+    };
+
+    // ✅ Validate items
+    if (!validateItems(formData.items)) {
+        return;
+    }
+
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch("{% url 'save_draft' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(text || "Server error");
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Draft Saved!',
+                text: 'Draft ID: ' + data.draft_id,
+                showCancelButton: true,  
+                confirmButtonText: 'Go to Dashboard',
+                cancelButtonText: 'View Draft List' 
+            }).then((result) => {
+                 if (result.isConfirmed) {
+                // First button clicked
+                window.location.href = "{% url 'dashboard' %}";
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                // Second button clicked
+                window.location.href = "{% url 'draft_list' %}"; // replace with your draft list URL
+            }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Save Failed',
+                text: data.message
+            });
+        }
+    })
+    .catch(error => {
+        console.error("Error submitting draft:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong while saving the draft.'
+        });
+    });
+}
+
+
+    const fieldsToSave = [
+        "buyerName", "buyerAddress1", "buyerAddress2", "buyerState", "buyerCity",
+        "buyerPincode", "buyerGstin", "buyerStateCode", "dcType", "dcDate", "process", "vehicleNo", "notes"
+    ];
+
+    function saveFormToLocalStorage() {
+        fieldsToSave.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                localStorage.setItem(`dcform_${id}`, el.value);
+            }
+        });
+        saveItemsToLocalStorage();
+
+    }
+
+function saveItemsToLocalStorage() {
+    const blocks = document.querySelectorAll("#itemsTableBody .item-block");
+    const items = [];
+
+    blocks.forEach(block => {
+        const rows = block.querySelectorAll("tr");
+
+        const item = {
+            // Row 1 (index 1): item + project info
+            item_name: rows[1].querySelector('[name="item_name[]"]')?.value || "",
+            description: rows[1].querySelector('[name="description[]"]')?.value || "",
+            project_name: rows[1].querySelector('[name="project_name[]"]')?.value || "",
+            project_incharge: rows[1].querySelector('[name="project_incharge[]"]')?.value || "",
+
+            // Row 3 (index 3): qty, uom, weights, sqft, rate
+            quantity: rows[3].querySelector('[name="quantity[]"]')?.value || "",
+            uom: rows[3].querySelector('[name="uom[]"]')?.value || "",
+            weight_per_unit: rows[3].querySelector('[name="weight_per_unit[]"]')?.value || "",
+            total_weight: rows[3].querySelector('[name="total_weight[]"]')?.value || "",
+            square_feet_per_unit: rows[3].querySelector('[name="square_feet_per_unit[]"]')?.value || "",
+            total_square_feet: rows[3].querySelector('[name="total_square_feet[]"]')?.value || "",
+            rate: rows[3].querySelector('[name="rate[]"]')?.value || "",
+
+            // Row 4 (index 4): remarks
+            remarks: rows[5].querySelector('[name="remarks[]"]')?.value || ""
+        };
+
+        items.push(item);
+    });
+
+    localStorage.setItem("dcform_items", JSON.stringify(items));
+}
+
+
+   // 🔹 Restore function
+function restoreFormFromLocalStorage() {
+    fieldsToSave.forEach(id => {
+        const el = document.getElementById(id);
+        const savedValue = localStorage.getItem(`dcform_${id}`);
+        if (el && savedValue !== null) {
+            el.value = savedValue;
+            if (id === "buyerState" && savedValue) {
+                $("#buyerState").trigger('change');
+                setTimeout(() => {
+                    $("#buyerCity").val(localStorage.getItem(`dcform_buyerCity`) || '');
+                }, 100);
+            }
+        }
+    });
+
+    restoreItemsFromLocalStorage();
+
+    // Hide both initially
+    $("#saveSupplierBtn").hide();
+    $("#updateSupplierBtn").hide(); 
+
+    // 🔹 After restore, check supplier from DB (so currentSupplier is set)
+    const buyerName = $("#buyerName").val().trim();
+    if (buyerName && typeof checkSupplier === "function") {
+        checkSupplier(buyerName);  
+    }
+}
+
+$(document).ready(function () {
+
+    const $buyerName = $("#buyerName");
+
+    // 🔹 Save whenever user types in or selects buyerName
+    $("#buyerName").on("input change", function () {
+        saveFormToLocalStorage();
+        checkForChanges(); // only supplier fields
+    });
+
+    // 🔹 Trigger supplier check on blur
+    $buyerName.on("blur", function () {
+        const typedName = $(this).val().trim();
+        if (typedName) {
+            checkSupplier(typedName);
+        }
+    });
+
+    // 🔹 Supplier fields that affect Save/Update button
+    const supplierFields = [
+        "buyerName", "buyerAddress1", "buyerAddress2", "buyerState",
+        "buyerCity", "buyerPincode", "buyerGstin", "buyerStateCode"
+    ];
+
+    supplierFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener("input", function () {
+                saveFormToLocalStorage();
+                checkForChanges(); // only supplier fields
+            });
+            el.addEventListener("change", function () {
+                saveFormToLocalStorage();
+                checkForChanges(); // only supplier fields
+            });
+        }
+    });
+
+    // 🔹 Save/Update button actions
+    $("#saveSupplierBtn").on("click", function () {
+        saveNewSupplier();
+    });
+
+    $("#updateSupplierBtn").on("click", function () {
+        updateSupplier();
+    });
+
+    initializeSupplierAutocomplete(); // setup autocomplete first
+
+    // 🔹 Restore form from localStorage on page load
+    restoreFormFromLocalStorage();
+});
+
+
+
+function restoreItemsFromLocalStorage() {
+    const data = localStorage.getItem("dcform_items");
+    if (!data) return;
+
+    const items = JSON.parse(data);
+    const tbody = document.getElementById("itemsTableBody");
+    tbody.innerHTML = ""; // Clear existing
+
+    let itemCounter = 0;
+
+    items.forEach(item => {
+        itemCounter++;
+
+        // Create a wrapper tbody for the item block
+        const itemBlock = document.createElement("tbody");
+        itemBlock.classList.add("item-block");
+        itemBlock.setAttribute("data-block", itemCounter);
+
+        itemBlock.innerHTML = `
+            <!-- Header Row -->
+            <tr>
+                <th  style="width:5%;">S.No</th>
+                <th colspan="2" style="width:30%;">Item Name</th>
+                <th colspan="2" style="width:30%;">Item Description</th>
+                <th colspan="2" style="width:18%;">Project Name</th>
+                <th colspan="2" style="width:18%;">Project Incharge</th>
+            </tr>
+
+            <!-- Input Row -->
+            <tr>
+                <td rowspan="5" class="serial-no">${itemCounter}</td>
+                <td colspan="2"><input type="text" class="form-control item-name" name="item_name[]" value="${item.item_name}" required></td>
+                <td colspan="2"><input type="text" class="form-control" name="description[]" value="${item.description}" required></td>
+                <td colspan="2"><input type="text" class="form-control" name="project_name[]" value="${item.project_name}"></td>
+                <td colspan="2"><input type="text" class="form-control" name="project_incharge[]" value="${item.project_incharge}"></td>
+            </tr>
+
+            <!-- Quantity / UOM / Rate Row -->
+            <tr>
+                <th>Quantity</th>
+                <th>UOM</th>
+                <th class="weight-column">Weight/Unit</th>
+                <th class="weight-column">Total Wt</th>
+                <th class="square-feet-column">SqFt/Unit</th>
+                <th class="square-feet-column">Total SqFt</th>
+                <th>Rate</th>
+            </tr>
+            <tr>
+                <td><input type="number" class="form-control quantity" name="quantity[]" value="${item.quantity}" step="0.01" required></td>
+                <td>
+                    <select class="form-control" name="uom[]" required>
+                        <option value="">UOM</option>
+                        ${["NOS","KG","METER","LITER","SET","PIECE"].map(opt => 
+                            `<option value="${opt}" ${item.uom === opt ? "selected" : ""}>${opt}</option>`
+                        ).join("")}
+                    </select>
+                </td>
+                <td class="weight-column"><input type="number" class="form-control weight-per-unit" name="weight_per_unit[]" value="${item.weight_per_unit}" step="0.01"></td>
+                <td class="weight-column"><input type="number" class="form-control total-weight" name="total_weight[]" value="${item.total_weight}" step="0.01" readonly></td>
+                <td class="square-feet-column"><input type="number" class="form-control square-feet-per-unit" name="square_feet_per_unit[]" value="${item.square_feet_per_unit}" step="0.01"></td>
+                <td class="square-feet-column"><input type="number" class="form-control total-square-feet" name="total_square_feet[]" value="${item.total_square_feet}" step="0.01" readonly></td>
+                <td><input type="number" class="form-control" name="rate[]" value="${item.rate}" step="0.01"></td>
+            </tr>
+
+            <!-- Remarks / Delete -->
+            <tr>
+                <th colspan="4" style="width:40%">Remarks</th>
+                <th colspan="4" style="width:40%">Action</th>
+            </tr>
+            <tr>
+                <td colspan="4"><input type="text" class="form-control" name="remarks[]" value="${item.remarks || ''}"></td>
+                <td colspan="4"><button type="button" class="btn btn-danger btn-sm remove-item-btn" onclick="removeItemBlock(this)">Delete</button></td>
+            </tr>
+        `;
+
+        tbody.appendChild(itemBlock);
+
+        // ✅ Bind calculation functions
+        const quantityInput = itemBlock.querySelector(".quantity");
+        const weightInput = itemBlock.querySelector(".weight-per-unit");
+        const sqftInput = itemBlock.querySelector(".square-feet-per-unit");
+
+        quantityInput.addEventListener("input", () => calculateTotalWeight(itemBlock));
+        weightInput.addEventListener("input", () => calculateTotalWeight(itemBlock));
+        sqftInput.addEventListener("input", () => calculateTotalSquareFeet(itemBlock));
+
+        // Initial calculations
+        calculateTotalWeight(itemBlock);
+        calculateTotalSquareFeet(itemBlock);
+    });
+
+    updateSerialNumbers();
+    initializeItemAutocomplete('#itemsTableBody .item-block:last-child .item-name');
+    toggleColumns();
+}
+
+
+
+
+    function checkSavedData() {
+        return fieldsToSave.some(id => localStorage.getItem(`dcform_${id}`)) ||
+               localStorage.getItem("dcform_items") !== null;
+        }
+
+    function clearFormStorage() {
+        if (Array.isArray(fieldsToSave)) {
+            fieldsToSave.forEach(id => {
+                localStorage.removeItem(`dcform_${id}`);
+            });
+        }
+
+        localStorage.removeItem("dcform_items");
+        localStorage.removeItem("dcform_showWeight");
+        localStorage.removeItem("dcform_showSquareFeet");
+
+        console.log("Local storage cleared for delivery note form.");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("deliveryNoteForm");
+        const continueBtn = document.getElementById("continueBtn");
+
+        if (checkSavedData()) {
+            continueBtn.style.display = "inline-block";
+            form.style.display = "none";
+        }
+
+        continueBtn.addEventListener("click", () => {
+            restoreFormFromLocalStorage();
+            continueBtn.style.display = "none";
+            form.style.display = "block";
+        });
+
+        fieldsToSave.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener("input", saveFormToLocalStorage);
+            }
+        });
+        // --- Default Items Section ---
+    const tbody = document.getElementById("itemsTableBody");
+    if (!localStorage.getItem("dcform_items")) {
+        addItem(); // Add one default block if no saved items
+    } else {
+        restoreFormFromLocalStorage();
+    }
+
+    
+    document.getElementById("itemsTableBody").addEventListener("input", function(e) {
+        saveItemsToLocalStorage();
+
+        if (e.target.classList.contains("quantity") || e.target.classList.contains("weight-per-unit")) {
+            calculateTotalWeight(e.target.closest("tr"));
+        }
+        if (e.target.classList.contains("quantity") || e.target.classList.contains("square-feet-per-unit")) {
+            calculateTotalSquareFeet(e.target.closest("tr"));
+        }
+    });
+
+    // Show/hide columns
+    $("#showWeight, #showSquareFeet").on("change", toggleColumns);
+
+    // Clear storage on form submit
+    document.getElementById("deliveryNoteForm");
+    form.addEventListener("submit", () => {
+        clearFormStorage();
+    });
+
+    // Default date for dcDate
+    const dcDateInput = document.getElementById('dcDate');
+    if (dcDateInput && !dcDateInput.value) {
+        const today = new Date().toISOString().split('T')[0];
+        dcDateInput.value = today;
+    }
+
+    // Initialize other parts
+    populateMainFormStates();
+    initializeSupplierAutocomplete();
+    initializeItemAutocomplete('.item-name');
+    initColumnVisibility();
+});
+
+
+// ----------------------
+// Clear Entire Form
+// ----------------------
+// ------------------------------
+function clearForm() {
+    const form = document.getElementById("deliveryNoteForm");
+    if (form) form.reset(); // reset all form fields
+
+    // Clear saved data
+    if (typeof clearFormStorage === "function") clearFormStorage();
+
+    // Reset supplier tracking
+    currentSupplier = null;
+
+    // Reset Save/Update buttons
+    $("#saveSupplierBtn").hide();
+    $("#updateSupplierBtn").hide();
+
+    // Clear items table
+    const tbody = document.getElementById("itemsTableBody");
+    if (tbody) tbody.innerHTML = "";
+
+    itemCounter = 0;
+
+    // Add a fresh blank item row
+    if (typeof addItem === "function") addItem();
+
+    // Reset dropdowns / other UI fields
+    const $buyerCity = $("#buyerCity");
+    if ($buyerCity.length) $buyerCity.html('<option value="">Select City</option>');
+
+    // Reset checkboxes
+    $("#showWeight, #showSquareFeet").prop("checked", true);
+
+    // Recalculate columns and serial numbers
+    if (typeof toggleColumns === "function") toggleColumns();
+    if (typeof updateSerialNumbers === "function") updateSerialNumbers();
+
+    console.log("Form cleared and reset to fresh state.");
+
+    // 🔹 Re-run supplier check if buyerName has value
+    const buyerName = $("#buyerName").val().trim();
+    if (buyerName) {
+        if (typeof checkSupplier === "function") {
+            checkSupplier(buyerName);  // 🔄 reuse same logic for typed or dropdown
+        }
+    }
+}
+
+
+// ----------------------
+// Add New Item Block
+// ----------------------
+let itemCounter = 1;
+
+function addItem() {
+   
+    const tbody = document.getElementById("itemsTableBody");
+
+    // Create a wrapper <tbody> for one item block
+    const itemBlock = document.createElement("tbody");
+    itemBlock.classList.add("item-block");
+    // itemBlock.setAttribute("data-block", itemCounter);
+
+    itemBlock.innerHTML = `
+        <!-- Header Row -->
+        <tr>
+          <th style="width:5%;">S.NO</th>
+          <th colspan="2" style="width:30%;">Item Name</th>
+          <th colspan="2" style="width:25%;">Description</th>
+          <th colspan="2" style="width:18%;">Project Name</th>
+          <th colspan="2" style="width:18%;">Project Incharge</th>
+        </tr>
+
+        <!-- Input Row -->
+        <tr>
+         <td rowspan="5">${itemCounter}</td>
+          <td colspan="2"><input type="text" class="form-control item-name" name="item_name[]" placeholder="Item Name"></td>
+          <td colspan="2"><input type="text" class="form-control" name="description[]" placeholder="Description"></td>
+          <td colspan="2"><input type="text" class="form-control" name="project_name[]" placeholder="Project"></td>
+          <td colspan="2"><input type="text" class="form-control" name="project_incharge[]" placeholder="Incharge"></td>
+        </tr>
+
+        <!-- Quantity Row -->
+        <tr>
+          <th>Quantity</th>
+          <th>UOM</th>
+          <th class="weight-column">Weight/Unit</th>
+          <th class="weight-column">Total Wt</th>
+          <th class="square-feet-column">SqFt/Unit</th>
+          <th class="square-feet-column">Total SqFt</th>
+          <th>Rate</th>
+        </tr>
+        <tr>
+          <td><input type="number" class="form-control quantity" name="quantity[]" step="0.01"></td>
+          <td>
+            <select class="form-control" name="uom[]">
+              <option value="">UOM</option>
+              <option value="NOS">NOS</option>
+              <option value="KG">KG</option>
+              <option value="METER">METER</option>
+              <option value="LITER">LITER</option>
+              <option value="SET">SET</option>
+              <option value="PIECE">PIECE</option>
+            </select>
+          </td>
+          <td class="weight-column"><input type="number" class="form-control weight-per-unit" name="weight_per_unit[]" step="0.01"></td>
+          <td class="weight-column"><input type="number" class="form-control total-weight" name="total_weight[]" step="0.01" readonly></td>
+          <td class="square-feet-column"><input type="number" class="form-control square-feet-per-unit" name="square_feet_per_unit[]" step="0.01"></td>
+          <td class="square-feet-column"><input type="number" class="form-control total-square-feet" name="total_square_feet[]" step="0.01" readonly></td>
+          <td><input type="number" class="form-control" name="rate[]" step="0.01"></td>
+        </tr>
+
+        <!-- Remarks & Delete -->
+        <tr>
+          <th colspan="4">Remarks</th>
+          <th colspan="4">Action</th>
+        </tr>
+        <tr>
+          <td colspan="4"><input type="text" class="form-control" name="remarks[]" placeholder="Remarks"></td>
+          <td colspan="4"><button type="button" class="btn btn-danger btn-sm" onclick="removeItemBlock(this)">Delete</button></td>
+        </tr>
+    `;
+
+    tbody.appendChild(itemBlock);
+    initializeItemAutocomplete(`#itemsTableBody .item-block:last-child .item-name`);
+    itemCounter++;
+    updateSerialNumbers(); // numbering will always be 1,2,3...
+    toggleColumns();
+}
+
+// ✅ Remove full item block
+function removeItemBlock(button) {
+    const block = button.closest("tbody.item-block");
+    if (document.querySelectorAll("#itemsTableBody .item-block").length > 1) {
+        block.remove();
+        updateSerialNumbers();
+    } else {
+        Swal.fire({
+            icon: "warning",
+            title: "Warning",
+            text: "At least one item block is required."
+        });
+    }
+}
+
+// ✅ Update serial numbers
+function updateSerialNumbers() {
+    document.querySelectorAll("#itemsTableBody .item-block").forEach((block, index) => {
+       // The S.NO cell is in the SECOND row (with rowspan)
+        const snoCell = block.querySelector("tr:nth-child(2) td[rowspan]");
+        if (snoCell) {
+            snoCell.textContent = index + 1; // consecutive numbering
+        }
+    });
+
+    // Keep global counter in sync
+    itemCounter = document.querySelectorAll("#itemsTableBody .item-block").length;
+}
+
+
+
+
+</script>
+{% endblock %}

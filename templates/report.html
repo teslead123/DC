@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Note - Exact Match</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .a4-page {
+            width: 210mm;
+            height: 255mm;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            position: relative;
+            border: 1px solid #ccc;
+        }
+{% comment %} .border{
+    border: 1px solid black;
+
+    position: absolute;
+        margin-left: 50%;
+        height: 50px;
+} {% endcomment %}
+        .main-border {
+            border: 2px solid black;
+            height: calc(100% - 4mm);
+            margin: 2mm;
+            position: relative;
+        }
+
+        .header-section {
+            border-bottom: 1px solid black;
+            padding: 8px 12px;
+            position: relative;
+            height: 116px;
+        }
+
+        .teslead-logo {
+            position: absolute;
+            left: 12px;
+            top: 8px;
+            font-size: 16pt;
+            font-weight: bold;
+        }
+
+        .tuv-logo {
+            position: absolute;
+            right: 12px;
+            top: 8px;
+            width: 60px;
+            height: 60px;
+            border: 1px solid black;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .tuv-content {
+            font-size: 7pt;
+            font-weight: bold;
+            line-height: 1.1;
+        }
+
+        .company-header {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 8.5pt;
+            line-height: 1.2;
+        }
+
+        .company-name {
+            font-size: 10pt;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .address-section {
+            border-bottom: 1px solid black;
+            padding: 8px 12px;
+            display: flex;
+            min-height: 90px;
+
+        }
+
+        .buyer-info {
+            width: 65%;
+            font-size: 8.5pt;
+            line-height: 1.3;
+           
+            background-color: aqua;
+        }
+
+        .buyer-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .dc-details {
+            width: 35%;
+          
+            padding-left: 8px;
+            
+        }
+
+        .dc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.5pt;
+        }
+
+        .dc-table td {
+            border: 1px solid black;
+            padding: 4px 6px;
+            height: 18px;
+        }
+
+        .dc-label {
+            font-weight: bold;
+            width: 45%;
+            background-color: #f8f8f8;
+        }
+
+        .delivery-note-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 11pt;
+            padding: 5px 0;
+            border-bottom: 1px solid black;
+            text-decoration: underline;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.5pt;
+        }
+
+        .items-table th {
+            border: 1px solid black;
+            padding: 6px 4px;
+            font-weight: bold;
+            text-align: center;
+            background-color: #f8f8f8;
+            height: 25px;
+        }
+
+        .items-table td {
+            border: 1px solid black;
+            padding: 4px;
+            vertical-align: top;
+        }
+
+        .col-sno { width: 8%; text-align: center; }
+        .col-desc { width: 45%; }
+        .col-uom { width: 8%; text-align: center; }
+        .col-qty { width: 12%; text-align: center; }
+        .col-remarks { width: 27%; }
+
+        .item-row {
+            height: 80px;
+        }
+
+        .empty-space {
+            height: 320px;
+        }
+
+        .footer-section {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid black;
+            padding: 8px 12px;
+            height: 104px;
+        }
+
+        .footer-note {
+            font-size: 8.5pt;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8.5pt;
+        }
+
+        .signature-left, .signature-right {
+            width: 45%;
+        }
+
+        .signature-linee {
+            border-bottom: 1px solid black;
+            height: 47px;
+            margin-top: 3px;
+        }
+
+          .signature-line {
+            border-bottom: 1px solid black;
+            height: 25px;
+            margin-top: 3px;
+        }
+
+        .bold { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="a4-page">
+        <div class="main-border">
+            <!-- Header Section -->
+            <div class="header-section">
+                <div class="teslead-logo"><img src="{% static 'images/223.jpg' %}" alt="Teslead Logo" class="brand-logo"></div>
+                <div class="tuv-logo">
+                    <div class="tuv-content">
+                        TUV<br>
+                        INDIA<br>
+                        ISO 9001 CERTIFIED
+                    </div>
+                </div>
+                <div class="company-header">
+                    <div class="company-name">TESLEAD EQUIPMENTS PRIVATE LIMITED</div>
+                    <div>No:152, Sidco Industrial Estate,</div>
+                    <div>Malumachampatti, Coimbatore-641021.</div>
+                    <div>Phone No:0422-2655579,764 MOBILE NO: 9655217270</div>
+                    <div>Email: sales@teslead.com, Website: www.teslead.com</div>
+                    <div>GSTIN:33AABCT6181D1ZL ,State:Tamil Nadu ,State Code:33</div>
+                </div>
+            </div>
+
+            <!-- Address Section -->
+            <div class="address-section">
+                <div class="buyer-info">
+                    <div class="buyer-name">M/S SRI BALAJI ALLOYS - 2024-2025(AY25-26)</div>
+                    <div>1/314, HAPPY GARDEN COLONY</div>
+                    <div>METTUPALAYAM ROAD,</div>
+                    <div>COIMBATORE - 641 031.</div>
+                    <div>GSTIN No:33ADCPA4283G1Z1</div>
+                    <div>State:Tamil Nadu ,State Code:33</div>
+                </div>
+                <div class="border">
+                    
+                </div>
+               
+                <div class="dc-details">
+                    <table class="dc-table">
+                        <tr>
+                            <td class="dc-label">DC NO</td>
+                            <td>GDCAR/0096/25-26</td>
+                        </tr>
+                        <tr>
+                            <td class="dc-label">DC DATE</td>
+                            <td>07/06/2025</td>
+                        </tr>
+                        <tr>
+                            <td class="dc-label">PARTY'S REF NO</td>
+                            <td>SC/24/25-26 / 04.06.2025</td>
+                        </tr>
+                        <tr>
+                            <td class="dc-label">PO REF NO</td>
+                            <td>-</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Delivery Note Title -->
+            <div class="delivery-note-title">DELIVERY NOTE</div>
+
+            <!-- Items Table -->
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th class="col-sno">S. No</th>
+                        <th class="col-desc">Description</th>
+                        <th class="col-uom">UOM</th>
+                        <th class="col-qty">Quantity</th>
+                        <th class="col-remarks">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="item-row">
+                        <td class="col-sno">1</td>
+                        <td class="col-desc">VALVE COMBI BODY 6" - 600 - A352LCC + QT-VALVE COMBI BODY 6" - 600 - A352LCC + QT</td>
+                        <td class="col-uom">NOS</td>
+                        <td class="col-qty">3.00</td>
+                        <td class="col-remarks">
+                            COMBI VALVE BODY - 3 NOS<br>
+                            TEST PLATE - 4 NOS<br>
+                            FLANGE SIDE STUDS<br>
+                            M24 - 24 SET<br>
+                            COVER SIDE STUDS<br>
+                            M20 - 32 SET
+                        </td>
+                    </tr>
+                    <tr class="empty-space">
+                        <td class="col-sno"></td>
+                        <td class="col-desc"></td>
+                        <td class="col-uom"></td>
+                        <td class="col-qty"></td>
+                        <td class="col-remarks"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Footer Section -->
+            <div class="footer-section">
+                <div class="footer-note">
+                    Note : MATERIAL RETURNED TO THE PARTY. TESTING COMPLETED.APPROX VALUE RS.74500/- (Vehicle No:TN41W6826)
+                </div>
+                <div class="signatures">
+                    <div class="signature-left">
+                        <div>Receiver's Signature with seal</div>
+                        <div class="signature-linee"></div>
+                    </div>
+                    <div class="signature-right">
+                        <div>For TESLEAD EQUIPMENTS PRIVATE LIMITED</div>
+                        <div style="margin-top: 8px;">Authorised by</div>
+                        <div class="signature-line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

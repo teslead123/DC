@@ -1,0 +1,72 @@
+ SELECT 
+        d.id,
+	d.party_name,
+	sum(GROUP_CONCAT(i.item_name)) AS Total Items,
+	sum (i.quantity) as Total quantity,
+	d.process,
+        d.dc_type,
+	d.vehicle No,
+        i.project name
+        FROM draft d
+    LEFT JOIN draft_items i ON d.id = i.draft_id
+    WHERE d.created_by = %s AND d.status = 'DRAFT'
+    GROUP BY d.id, d.dc_type, d.dc_date
+    ORDER BY d.dc_date DESC;
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+def draft_list(request):
+    try:
+        # Try session username first, fallback to request.user.username
+        username = request.session.get('username')
+        if not username and hasattr(request.user, 'username'):
+            username = request.user.username
+        if not username:
+            logger.warning("No username found in session or user")
+            return render(request, 'draft_list.html', {'drafts': [], 'error': 'User not authenticated'})
+
+        logger.debug(f"Fetching drafts for user: {username}")
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT 
+        d.id,
+        d.dc_type,
+        d.dc_date,
+        GROUP_CONCAT(i.item_name) AS item_names,
+        GROUP_CONCAT(i.description) AS descriptions
+    FROM draft d
+    LEFT JOIN draft_items i ON d.id = i.draft_id
+    WHERE d.created_by = %s AND d.status = 'DRAFT'
+    GROUP BY d.id, d.dc_type, d.dc_date
+    ORDER BY d.dc_date DESC;
+""", [username])
+            drafts = cursor.fetchall()
+            logger.debug(f"Found {len(drafts)} drafts for user: {username}")
+
+            draft_list = [
+    {
+        'id': row[0],
+        'dc_type': row[1],
+        'dc_date': row[2],
+        'item_names': row[3].split(',') if row[3] else [],
+        'descriptions': row[4].split(',') if row[4] else []
+    }
+    for row in drafts
+]
+
+        return render(request, 'draft_list.html', {'drafts': draft_list})
+    except Exception as e:
+        logger.error(f"Error fetching draft list: {str(e)}", exc_info=True)
+        return render(request, 'draft_list.html', {'drafts': [], 'error': str(e)})

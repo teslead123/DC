@@ -1,0 +1,514 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Teslead{% endblock %}
+
+{% block extra_css %}
+<style>
+
+   
+    /*Dashboard Cards Grid */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+        margin-bottom: 20px;
+    }
+
+    /* .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 20px;
+} */
+
+    /* Attractive Dashboard Cards */
+    /* .dashboard-card {
+        background: white;
+        border-radius: 16px;
+        padding: 10px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    } */
+
+    .dashboard-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .dashboard-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #3B22C6 0%, #4C8CF1 100%);
+    }
+
+
+    .content-area.expanded {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+}
+
+
+    .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+    .card-icon {
+        font-size: 28px;
+        padding: 10px;
+        border-radius: 8px;
+        color: white;
+    }
+
+    .card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+        letter-spacing: 0.5px;
+    }
+
+    .card-value {
+        font-size: 36px;
+        font-weight: 800;
+        color: #1a1a2e;
+        margin: 10px 0;
+        background: linear-gradient(135deg, #3B22C6 0%, #4C8CF1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .card-subtitle {
+        font-size: 14px;
+        color: #6c757d;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    .card-trend {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .trend-up {
+        color: #28a745;
+    }
+
+    .trend-down {
+        color: #dc3545;
+    }
+
+    .trend-icon {
+        margin-right: 5px;
+    }
+
+    /* Charts Section */
+    .charts-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 25px;
+    }
+
+    .chart-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .chart-period {
+        background: linear-gradient(135deg, #3B22C6 0%, #4C8CF1 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .chart-period:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(59, 34, 198, 0.3);
+    }
+
+    .chart-canvas {
+        width: 100% !important;
+        height: 300px !important;
+        flex-grow: 1;
+    }
+
+    /* Status Indicators */
+    .status-open {
+        background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+    }
+
+    .status-partial {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    }
+
+    .status-closed {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+
+    .status-cancelled {
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        margin-top: 20px;
+    }
+
+    .quick-actions h3 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 20px;
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* ✅ 4 buttons per row */
+        gap: 20px;
+    }
+
+    .action-btn {
+        background: linear-gradient(135deg, #3B22C6 0%, #4C8CF1 100%);
+        color: white;
+        padding: 15px 20px;   
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;  /* center icon + text */
+        gap: 10px;
+        width: 100%; /* ✅ full width of its grid column */
+    }
+
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(59, 34, 198, 0.3);
+        color: white;
+    }
+
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .charts-section {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-buttons {
+            grid-template-columns: 1fr;
+        }
+        
+        .card-value {
+            font-size: 28px;
+        }
+
+        .chart-container {
+            min-height: 350px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+   
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-grid">
+            <!-- Draft DC -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon status-open">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <h3 class="card-title">DRAFT DC</h3>
+                </div>
+                <div class="card-value">0</div>
+                <p class="card-subtitle">Draft DC</p>
+                <div class="card-trend trend-up">
+                    <i class="fas fa-arrow-up trend-icon"></i>
+                    +6% from last week
+                </div>
+            </div>
+
+            <!-- Open DC -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon status-open">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h3 class="card-title">OPEN DC</h3>
+                </div>
+                <div class="card-value">{{ open_dc_count|default:0 }}</div>
+                <p class="card-subtitle">Delivery Challans Pending</p>
+                <div class="card-trend trend-up">
+                    <i class="fas fa-arrow-up trend-icon"></i>
+                    {% if open_dc_count %}{{ open_dc_count }} pending{% else %}No pending DCs{% endif %}
+                </div>
+            </div>
+
+            <!-- Closed DC -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon status-closed">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="card-title">CLOSED DC</h3>
+                </div>
+                <div class="card-value">{{ closed_dc_count|default:0 }}</div>
+                <p class="card-subtitle">Completed This Month</p>
+                <div class="card-trend trend-up">
+                    <i class="fas fa-arrow-up trend-icon"></i>
+                    {{ closed_dc_count|default:0 }} completed
+                </div>
+            </div>
+
+            <!-- Partial DC -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon status-partial">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="card-title">PARTIAL DC</h3>
+                </div>
+                <div class="card-value">{{ partial_dc_count|default:0 }}</div>
+                <p class="card-subtitle">Partially Delivered</p>
+                <div class="card-trend {% if partial_dc_count %}trend-down{% else %}trend-up{% endif %}">
+                    <i class="fas fa-{% if partial_dc_count %}arrow-down{% else %}arrow-up{% endif %} trend-icon"></i>
+                    {{ partial_dc_count|default:0 }} in progress
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="action-buttons">
+                <a href="{% url 'draft_delivery_challan' %}" class="action-btn">
+                    <i class="fas fa-plus"></i>
+                    Create New DC
+                </a>
+                <a href="#" class="action-btn">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    Closed Dc
+                </a>
+                <a href="#" class="action-btn">
+                    <i class="fas fa-boxes"></i>
+                    Check Pending DCs
+                </a>
+                <a href="#" class="action-btn">
+                    <i class="fas fa-chart-line"></i>
+                    View Reports
+                </a>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Weekly Report</h3>
+                    <button class="chart-period">Last 7 Days</button>
+                </div>
+                <canvas id="weeklyChart" class="chart-canvas"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Monthly Report</h3>
+                    <button class="chart-period">Last 30 Days</button>
+                </div>
+                <canvas id="monthlyChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="chart-container" style="margin-top: 40px;">
+            <div class="chart-header">
+                <h3 class="chart-title">Recent Activities</h3>
+                <button class="chart-period">View All</button>
+            </div>
+            <div style="padding: 20px 0;">
+                {% if recent_activities %}
+                    {% for activity in recent_activities %}
+                        <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #e9ecef;">
+                            <div style="width: 40px; height: 40px; background: 
+                                linear-gradient(135deg, 
+                                {% if activity.status == 'CLOSED' %}#28a745 0%, #20c997 100%{% elif activity.status == 'PARTIAL' %}#ffc107 0%, #fd7e14 100%{% else %}#17a2b8 0%, #20c997 100%{% endif %}); 
+                                border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                <i class="fas fa-{% if activity.status == 'CLOSED' %}check{% elif activity.status == 'PARTIAL' %}exclamation-triangle{% else %}truck{% endif %}" style="color: white; font-size: 14px;"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <strong>{{ activity.type|default:"Unknown Activity" }}</strong><br>
+                                <small style="color: #6c757d;">DC #{{ activity.dc_number|default:"N/A" }} • Customer: {{ activity.party_name|default:"N/A" }} • {{ activity.timestamp|default:"N/A" }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="padding: 15px 0; color: #6c757d;">No recent activities</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+<!-- </div> -->
+{% endblock %}
+
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    // Card animation + Charts
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.dashboard-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Weekly Chart
+        const weeklyData = {% if weekly_data %}{{ weekly_data|safe }}{% else %}[]{% endif %};
+        if (document.getElementById('weeklyChart')) {
+            new Chart(document.getElementById('weeklyChart'), {
+                type: 'line',
+                data: {
+                    labels: weeklyData.map(item => item.date),
+                    datasets: [{
+                        label: 'DC Count',
+                        data: weeklyData.map(item => item.count),
+                        borderColor: '#3B22C6',
+                        backgroundColor: 'rgba(59, 34, 198, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Number of DCs' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Date' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Monthly Chart
+        const monthlyData = {% if monthly_data %}{{ monthly_data|safe }}{% else %}[]{% endif %};
+        if (document.getElementById('monthlyChart')) {
+            new Chart(document.getElementById('monthlyChart'), {
+                type: 'bar',
+                data: {
+                    labels: monthlyData.map(item => item.date),
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: monthlyData.map(item => item.revenue),
+                        backgroundColor: '#4C8CF1',
+                        borderColor: '#3B22C6',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Revenue (₹)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Date' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+        }
+    }); // ✅ properly closed
+
+    // Refresh dashboard data
+    function refreshDashboard() {
+        location.reload();
+    }
+
+    // Auto-refresh every 5 minutes (optional)
+    // setInterval(refreshDashboard, 300000);
+</script>
+{% endblock %}
