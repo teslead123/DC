@@ -4,20 +4,21 @@
 {% block page_title %}< Draft DC List{% endblock %}
 
 {% block content %}
-<!-- <div class="content-area"> -->
+
     <div class="form-container">
-        <!-- <h2 class="section-title">
-            <i class="fas fa-file-edit section-icon"></i> Draft DC List
-        </h2> -->
+        
         <div class="table-responsive">
             <table class="table items-table" id="draftTable">
                 <thead>
                     <tr>
-                        <th style="width: 10%;">Draft ID</th>
-                        <th style="width: 12%;">DC Type</th>
-                        <th style="width: 10%;">Date</th>
-                        <th style="width: 20%;">Item Name</th>
-                        <th style="width: 25%;">Description</th>
+                        <th style="width: 8%;">Draft ID</th>
+                        <th style="width: 10%;">Party Name</th>
+                        <th style="width: 10%;">Process</th>
+                        <th style="width: 10%;">Total Items</th>
+                        <th style="width: 10%;">Total Quantity</th>
+                        <th style="width: 10%;">DC Type</th>
+                        <th style="width: 15%;">Vehicle No</th>
+                        <th style="width: 10%;">Porject Name</th>
                         <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
@@ -25,10 +26,13 @@
                     {% for draft in drafts %}
                     <tr data-draft-id="{{ draft.id }}">
                         <td>{{ draft.id }}</td>
+                        <td>{{ draft.party_name }}</td>
+                        <td>{{ draft.process }}</td>
+                        <td>{{ draft.total_items }}</td>
+                        <td>{{ draft.total_quantity }}</td>
                         <td>{{ draft.dc_type }}</td>
-                        <td>{{ draft.dc_date|date:"d-m-Y" }}</td>
-                        <td>{{ draft.item_names|join:", " }}</td>
-                        <td>{{ draft.descriptions|join:", " }}</td>
+                        <td>{{ draft.vehicle_no }}</td>
+                        <td>{{ draft.project_name }}</td>
                         <td>
                             <button type="button" class="btn btn-primary btn-sm btn-view-draft" data-draft-id="{{ draft.id }}">
                                 <i class="fas fa-eye"></i> View
@@ -312,13 +316,13 @@ $(document).ready(function () {
             "autoWidth": false,
             "responsive": true,
             "columnDefs": [
-                { "orderable": false, "targets": 5 }
+                { "orderable": false, "targets": 8 }
             ],
             "language": {
                  "lengthMenu": " _MENU_",
                 "paginate": {
-            previous: "← Previous",   // Left arrow
-            next: "Next →"        // Right arrow
+            previous: "← Previous",   
+            next: "Next →"      
                 }
 
             },
